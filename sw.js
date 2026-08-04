@@ -1,18 +1,28 @@
+const CACHE_NAME = 'perumahan-v2';
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cache) => {
+          if (cache !== CACHE_NAME) {
+            return caches.delete(cache); // Hapus cache lama yang membikin error di APK
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
 });
 
-// Paksa request API Apps Script untuk tidak pernah di-cache oleh APK
+// Selalu utamakan koneksi Network (Network First)
 self.addEventListener('fetch', (event) => {
-  if (event.request.url.includes('script.google.com')) {
-    event.respondWith(
-      fetch(event.request, { cache: "no-store" }).catch(() => {
-        return new Response(JSON.stringify({ status: "error", message: "Offline" }));
-      })
-    );
-  }
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
+  );
 });
