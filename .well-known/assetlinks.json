@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.abdifazar900_netizen.twa",
+        "sha256_cert_fingerprints": ["83:4A:14:2E:60:F2:3C:77:05:11:17:E6:ED:AD:CA:E0:7B:A4:76:EB:DA:B9:48:D3:1B:9F:86:EC:87:87:E5:CE"]
+      }
+    }]
