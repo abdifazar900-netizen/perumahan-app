@@ -2,24 +2,68 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- Kunci scaling agar tidak bisa di-zoom cubit ala web -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  
   <title>Aplikasi Perumahan</title>
+
+  <!-- Kunci Mode Native PWA / Android WebView -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- Warnai Status Bar HP disamakan dengan Warna Utama Aplikasi (#059669 = Hijau Emerald) -->
+  <meta name="theme-color" content="#059669">
+  <meta name="msapplication-navbutton-color" content="#059669">
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
     /* Styling agar responsif mirip aplikasi HP Native */
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* --- SENTUHAN FULL NATIVE FEEL --- */
+    /* Matikan Select Text & Highlight Warna Biru Khas Browser */
+    * {
+      -webkit-touch-callout: none; /* Matikan pop-up tekan lama */
+      -webkit-user-select: none;   /* Matikan blok teks */
+      user-select: none;
+      -webkit-tap-highlight-color: transparent; /* Hilangkan kotak biru pas tombol diklik */
+    }
+
+    /* Khusus untuk kolom input teks agar warga tetap bisa mengetik normal */
+    input, textarea {
+      -webkit-user-select: auto !important;
+      user-select: auto !important;
+    }
+    /* Matikan Select Text & Highlight Warna Biru Khas Browser */
+* {
+  -webkit-touch-callout: none; /* Matikan pop-up tekan lama */
+  -webkit-user-select: none;   /* Matikan blok teks */
+  user-select: none;
+  -webkit-tap-highlight-color: transparent; /* Hilangkan kotak biru pas tombol diklik */
+}
+
+/* Khusus untuk kolom input teks agar warga tetap bisa mengetik */
+input, textarea {
+  -webkit-user-select: auto !important;
+  user-select: auto !important;
+}
   </style>
+
   <link rel="manifest" href="manifest.json">
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-  }
-</script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
 </head>
 <body class="bg-gray-100 min-h-screen text-gray-800 flex justify-center">
 
