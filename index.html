@@ -216,50 +216,54 @@
 
     // --- FUNCTION LOGIN ---
     function prosesLogin() {
-      const nohp = document.getElementById("login-nohp").value;
-      const pass = document.getElementById("login-password").value;
-      const btn = document.getElementById("btn-login");
+  const nohp = document.getElementById("login-nohp").value;
+  const pass = document.getElementById("login-password").value;
+  const btn = document.getElementById("btn-login");
 
-      if (!nohp || !pass) {
-        alert("Mohon isi Nomor HP dan Password!");
-        return;
-      }
+  if (!nohp || !pass) {
+    alert("Mohon isi Nomor HP dan Password!");
+    return;
+  }
 
-      btn.innerText = "Memproses...";
-      btn.disabled = true;
+  btn.innerText = "Memproses...";
+  btn.disabled = true;
 
-      fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "login", no_hp: nohp, password: pass })
-      })
-      .then(res => res.json())
-      .then(data => {
-        btn.innerText = "MASUK";
-        btn.disabled = false;
+  fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action: "login", no_hp: nohp, password: pass })
+  })
+  .then(res => res.json())
+  .then(data => {
+    btn.innerText = "MASUK";
+    btn.disabled = false;
 
-        if (data.status === "success") {
-          currentUser = data.user;
-          document.getElementById("user-nama").innerText = currentUser.nama;
-          document.getElementById("user-norumah").innerText = "Blok " + currentUser.no_rumah;
-          
-          // Sembunyikan Login, Tampilkan Dashboard & Bottom Nav
-          document.getElementById("page-login").classList.add("hidden");
-          document.getElementById("page-dashboard").classList.remove("hidden");
-          document.getElementById("page-dashboard").classList.add("flex");
-          document.getElementById("bottom-nav").classList.remove("hidden");
+    if (data.status === "success") {
+      currentUser = data.user;
+      document.getElementById("user-nama").innerText = currentUser.nama;
+      document.getElementById("user-norumah").innerText = "Blok " + currentUser.no_rumah;
+      
+      // Sembunyikan Login, Tampilkan Dashboard & Bottom Nav
+      document.getElementById("page-login").classList.add("hidden");
+      document.getElementById("page-dashboard").classList.remove("hidden");
+      document.getElementById("page-dashboard").classList.add("flex");
+      document.getElementById("bottom-nav").classList.remove("hidden");
 
-          // Load data pengumuman
-          loadPengumuman();
-        } else {
-          alert(data.message);
-        }
-      })
-      .catch(err => {
-        btn.innerText = "MASUK";
-        btn.disabled = false;
-        alert("Gagal terhubung ke server: " + err);
-      });
+      // 🔍 1. JALANKAN SAKLAR CEK ROLE ADMIN DI SINI
+      checkAdminRole();
+
+      // 📢 2. LOAD DATA PENGUMUMAN
+      loadPengumuman();
+    } else {
+      alert(data.message);
     }
+  })
+  .catch(err => {
+    btn.innerText = "MASUK";
+    btn.disabled = false;
+    alert("Gagal terhubung ke server: " + err);
+  });
+}
 
     // --- FUNCTION AMBIL PENGUMUMAN ---
     function loadPengumuman() {
