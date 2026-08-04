@@ -223,34 +223,42 @@
 
     // --- FUNCTION AMBIL PENGUMUMAN ---
     function loadPengumuman() {
-      fetch(API_URL + "?action=getPengumuman")
-      .then(res => res.json())
-      .then(data => {
-        if (data.status === "success") {
-          let htmlHome = "";
-          let htmlFull = "";
+  // Tambahkan timestamp (&_t=...) agar WebView APK tidak menahan cache lama
+  const cacheBuster = "&_t=" + new Date().getTime();
+  
+  fetch(API_URL + "?action=getPengumuman" + cacheBuster, {
+    method: "GET",
+    headers: { "Content-Type": "text/plain;charset=utf-8" }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === "success") {
+      let htmlHome = "";
+      let htmlFull = "";
 
-          data.data.reverse().forEach((item, index) => {
-            let card = `
-              <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
-                <div class="flex justify-between items-center mb-1">
-                  <span class="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded">${item.kategori}</span>
-                  <span class="text-[10px] text-gray-400">${item.tanggal.substring(0,10)}</span>
-                </div>
-                <h4 class="font-bold text-sm text-gray-800">${item.judul}</h4>
-                <p class="text-xs text-gray-600 mt-1">${item.isi}</p>
-              </div>
-            `;
-            if (index < 2) htmlHome += card; // Tampilkan max 2 di Home
-            htmlFull += card;
-          });
-
-          document.getElementById("list-pengumuman-home").innerHTML = htmlHome || "<p class='text-xs text-gray-400 text-center py-2'>Belum ada pengumuman.</p>";
-          document.getElementById("list-pengumuman-full").innerHTML = htmlFull;
-        }
+      data.data.reverse().forEach((item, index) => {
+        let card = `
+          <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded">${item.kategori}</span>
+              <span class="text-[10px] text-gray-400">${item.tanggal.substring(0,10)}</span>
+            </div>
+            <h4 class="font-bold text-sm text-gray-800">${item.judul}</h4>
+            <p class="text-xs text-gray-600 mt-1">${item.isi}</p>
+          </div>
+        `;
+        if (index < 2) htmlHome += card;
+        htmlFull += card;
       });
-    }
 
+      document.getElementById("list-pengumuman-home").innerHTML = htmlHome || "<p class='text-xs text-gray-400 text-center py-2'>Belum ada pengumuman.</p>";
+      document.getElementById("list-pengumuman-full").innerHTML = htmlFull;
+    }
+  })
+  .catch(err => {
+    console.log("Error Pengumuman:", err);
+  });
+}
     // --- FUNCTION KIRIM LAPORAN ---
     function kirimLaporan() {
       const judul = document.getElementById("lap-judul").value;
