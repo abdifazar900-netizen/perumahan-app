@@ -479,6 +479,54 @@ function simpanPengumumanAdmin() {
     alert("Gagal menerbitkan pengumuman: " + err);
   });
 }
+    // FUNGSI 1: HAPUS PENGUMUMAN
+function hapusPengumuman(idInfo) {
+  if (!confirm("Apakah Anda yakin ingin menghapus pengumuman ini?")) return;
+
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({
+      action: 'hapusPengumuman',
+      id_info: idInfo
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.status === 'success') {
+      alert(res.message);
+      loadPengumuman(); // Reload ulang daftar pengumuman
+    } else {
+      alert("Gagal menghapus: " + res.message);
+    }
+  })
+  .catch(err => alert("Error: " + err.message));
+}
+
+// FUNGSI 2: EDIT PENGUMUMAN
+function simpanEditPengumuman(idInfo, judulBaru, isiBaru, kategoriBaru) {
+  fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({
+      action: 'editPengumuman',
+      id_info: idInfo,
+      judul: judulBaru,
+      isi: isiBaru,
+      kategori: kategoriBaru
+    })
+  })
+  .then(res => res.json())
+  .then(res => {
+    if (res.status === 'success') {
+      alert(res.message);
+      loadPengumuman(); // Reload ulang daftar pengumuman
+    } else {
+      alert("Gagal memperbarui: " + res.message);
+    }
+  })
+  .catch(err => alert("Error: " + err.message));
+}
   </script>
 </body>
 </html>
