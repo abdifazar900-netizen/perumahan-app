@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Aplikasi Perumahan</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Styling agar responsif mirip aplikasi HP Native */
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800 flex justify-center">
+
+  <!-- Main Container (Dipatok ukuran HP max-w-md) -->
+  <div class="w-full max-w-md bg-white min-h-screen shadow-lg flex flex-col relative pb-20">
+
+    <!-- ========================================== -->
+    <!-- 1. HALAMAN LOGIN -->
+    <!-- ========================================== -->
+    <div id="page-login" class="p-6 flex flex-col justify-center min-h-screen bg-emerald-600 text-white">
+      <div class="text-center mb-8">
+        <div class="bg-white text-emerald-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg">
+          <i class="fa-solid fa-house-chimney-window"></i>
+        </div>
+        <h1 class="text-2xl font-bold">Warga Digital</h1>
+        <p class="text-emerald-100 text-sm">Aplikasi Sistem Informasi Perumahan</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 text-gray-800 shadow-xl space-y-4">
+        <h2 class="text-lg font-bold text-center text-gray-700">Masuk Akun</h2>
+        
+        <div>
+          <label class="text-xs font-semibold text-gray-500">Nomor HP</label>
+          <input type="number" id="login-nohp" placeholder="08123456789" class="w-full border rounded-lg p-3 text-sm focus:outline-emerald-500 mt-1">
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-gray-500">Kata Sandi</label>
+          <input type="password" id="login-password" placeholder="••••••••" class="w-full border rounded-lg p-3 text-sm focus:outline-emerald-500 mt-1">
+        </div>
+
+        <button onclick="prosesLogin()" id="btn-login" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg text-sm shadow transition">
+          MASUK
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. DASHBOARD / BERANDA WARGA -->
+    <!-- ========================================== -->
+    <div id="page-dashboard" class="hidden flex-col">
+      <!-- Header Bar -->
+      <div class="bg-emerald-600 text-white p-5 rounded-b-2xl shadow">
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <p class="text-xs text-emerald-100">Selamat datang,</p>
+            <h2 id="user-nama" class="font-bold text-lg">Pak Warga</h2>
+            <p id="user-norumah" class="text-xs bg-emerald-700 px-2 py-0.5 rounded-full inline-block mt-1">Blok -</p>
+          </div>
+          <button onclick="logout()" class="text-xs bg-emerald-700 p-2 rounded-lg hover:bg-emerald-800">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+
+        <!-- Banner Info Kas -->
+        <div class="bg-white text-gray-800 p-4 rounded-xl shadow-md flex justify-between items-center">
+          <div>
+            <p class="text-xs text-gray-500 font-semibold">Status Iuran Bulan Ini</p>
+            <span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">
+              <i class="fa-solid fa-circle-check mr-1"></i> Lunas
+            </span>
+          </div>
+          <button onclick="alert('Fitur Bayar Iuran via Midtrans/Transfer Kas')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">
+            Bayar Kas
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="p-5 grid grid-cols-3 gap-3 text-center">
+        <button onclick="pindahTab('laporan')" class="bg-red-50 p-3 rounded-xl border border-red-100 text-red-600 flex flex-col items-center">
+          <i class="fa-solid fa-triangle-exclamation text-xl mb-1"></i>
+          <span class="text-xs font-semibold">Lapor Masalah</span>
+        </button>
+        <button onclick="alert('Kontak Satpam: 0812-9999-8888')" class="bg-amber-50 p-3 rounded-xl border border-amber-100 text-amber-600 flex flex-col items-center">
+          <i class="fa-solid fa-shield-halved text-xl mb-1"></i>
+          <span class="text-xs font-semibold">Pos Satpam</span>
+        </button>
+        <button onclick="pindahTab('pengumuman')" class="bg-blue-50 p-3 rounded-xl border border-blue-100 text-blue-600 flex flex-col items-center">
+          <i class="fa-solid fa-bullhorn text-xl mb-1"></i>
+          <span class="text-xs font-semibold">Pengumuman</span>
+        </button>
+      </div>
+
+      <!-- Section Pengumuman Terbaru -->
+      <div class="px-5">
+        <div class="flex justify-between items-center mb-3">
+          <h3 class="font-bold text-gray-700 text-sm">Pengumuman Terkini</h3>
+          <button onclick="pindahTab('pengumuman')" class="text-xs text-emerald-600 font-semibold">Lihat Semua</button>
+        </div>
+        <div id="list-pengumuman-home" class="space-y-3">
+          <!-- Data pengumuman dari API dimasukkan lewat JS -->
+          <p class="text-xs text-gray-400 italic text-center py-4">Memuat pengumuman...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 3. TAB PENGUMUMAN -->
+    <!-- ========================================== -->
+    <div id="page-pengumuman" class="hidden p-5">
+      <h2 class="font-bold text-lg mb-4 text-gray-800">Daftar Pengumuman</h2>
+      <div id="list-pengumuman-full" class="space-y-3">
+        <!-- Full list pengumuman -->
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 4. TAB LAPORAN / ADUAN -->
+    <!-- ========================================== -->
+    <div id="page-laporan" class="hidden p-5">
+      <h2 class="font-bold text-lg mb-4 text-gray-800">Buat Laporan Aduan</h2>
+      
+      <div class="bg-gray-50 p-4 rounded-xl border space-y-3">
+        <div>
+          <label class="text-xs font-semibold text-gray-600">Judul Laporan</label>
+          <input type="text" id="lap-judul" placeholder="Contoh: Lampu Jalan Blok A Mati" class="w-full border rounded-lg p-2.5 text-sm mt-1">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-600">Deskripsi Detail</label>
+          <textarea id="lap-deskripsi" rows="3" placeholder="Jelaskan detail masalah..." class="w-full border rounded-lg p-2.5 text-sm mt-1"></textarea>
+        </div>
+        <button onclick="kirimLaporan()" id="btn-kirim-laporan" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm shadow">
+          KIRIM LAPORAN
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- BOTTOM NAVIGATION BAR -->
+    <!-- ========================================== -->
+    <div id="bottom-nav" class="hidden fixed bottom-0 max-w-md w-full bg-white border-t flex justify-around py-2.5 text-gray-400 text-center text-xs">
+      <button onclick="pindahTab('dashboard')" id="nav-dashboard" class="text-emerald-600">
+        <i class="fa-solid fa-house text-lg block"></i> Home
+      </button>
+      <button onclick="pindahTab('pengumuman')" id="nav-pengumuman">
+        <i class="fa-solid fa-bullhorn text-lg block"></i> Info
+      </button>
+      <button onclick="pindahTab('laporan')" id="nav-laporan">
+        <i class="fa-solid fa-file-pen text-lg block"></i> Lapor
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT & INTEGRASI BACKEND (GAS) -->
+  <!-- ========================================== -->
+  <script>
+    // ⚠️ GANTI DENGAN URL WEB APP DEPLOYMENT GOOGLE APPS SCRIPT ANDA!
+    const API_URL = "https://script.google.com/macros/s/AKfycbwokWvgkvx9_VYVN8Y7l39eECgMr_NbrTDrvuNnnMRnHKURHXozBZq3b1EgZaf7ivZYhA/exec";
+
+    let currentUser = null;
+
+    // --- FUNCTION LOGIN ---
+    function prosesLogin() {
+      const nohp = document.getElementById("login-nohp").value;
+      const pass = document.getElementById("login-password").value;
+      const btn = document.getElementById("btn-login");
+
+      if (!nohp || !pass) {
+        alert("Mohon isi Nomor HP dan Password!");
+        return;
+      }
+
+      btn.innerText = "Memproses...";
+      btn.disabled = true;
+
+      fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "login", no_hp: nohp, password: pass })
+      })
+      .then(res => res.json())
+      .then(data => {
+        btn.innerText = "MASUK";
+        btn.disabled = false;
+
+        if (data.status === "success") {
+          currentUser = data.user;
+          document.getElementById("user-nama").innerText = currentUser.nama;
+          document.getElementById("user-norumah").innerText = "Blok " + currentUser.no_rumah;
+          
+          // Sembunyikan Login, Tampilkan Dashboard & Bottom Nav
+          document.getElementById("page-login").classList.add("hidden");
+          document.getElementById("page-dashboard").classList.remove("hidden");
+          document.getElementById("page-dashboard").classList.add("flex");
+          document.getElementById("bottom-nav").classList.remove("hidden");
+
+          // Load data pengumuman
+          loadPengumuman();
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch(err => {
+        btn.innerText = "MASUK";
+        btn.disabled = false;
+        alert("Gagal terhubung ke server: " + err);
+      });
+    }
+
+    // --- FUNCTION AMBIL PENGUMUMAN ---
+    function loadPengumuman() {
+      fetch(API_URL + "?action=getPengumuman")
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === "success") {
+          let htmlHome = "";
+          let htmlFull = "";
+
+          data.data.reverse().forEach((item, index) => {
+            let card = `
+              <div class="bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-[10px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded">${item.kategori}</span>
+                  <span class="text-[10px] text-gray-400">${item.tanggal.substring(0,10)}</span>
+                </div>
+                <h4 class="font-bold text-sm text-gray-800">${item.judul}</h4>
+                <p class="text-xs text-gray-600 mt-1">${item.isi}</p>
+              </div>
+            `;
+            if (index < 2) htmlHome += card; // Tampilkan max 2 di Home
+            htmlFull += card;
+          });
+
+          document.getElementById("list-pengumuman-home").innerHTML = htmlHome || "<p class='text-xs text-gray-400 text-center py-2'>Belum ada pengumuman.</p>";
+          document.getElementById("list-pengumuman-full").innerHTML = htmlFull;
+        }
+      });
+    }
+
+    // --- FUNCTION KIRIM LAPORAN ---
+    function kirimLaporan() {
+      const judul = document.getElementById("lap-judul").value;
+      const deskripsi = document.getElementById("lap-deskripsi").value;
+      const btn = document.getElementById("btn-kirim-laporan");
+
+      if (!judul || !deskripsi) {
+        alert("Mohon lengkapi judul dan deskripsi laporan!");
+        return;
+      }
+
+      btn.innerText = "Mengirim...";
+      btn.disabled = true;
+
+      fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "kirimLaporan",
+          nama_pelapor: currentUser.nama,
+          no_rumah: currentUser.no_rumah,
+          judul_laporan: judul,
+          deskripsi: deskripsi
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        btn.innerText = "KIRIM LAPORAN";
+        btn.disabled = false;
+        alert(data.message);
+        
+        // Reset Form & Pindah ke Home
+        document.getElementById("lap-judul").value = "";
+        document.getElementById("lap-deskripsi").value = "";
+        pindahTab('dashboard');
+      });
+    }
+
+    // --- NAVIGATION TAB SWITCHER ---
+    function pindahTab(tabName) {
+      // Hide all pages
+      document.getElementById("page-dashboard").classList.add("hidden");
+      document.getElementById("page-dashboard").classList.remove("flex");
+      document.getElementById("page-pengumuman").classList.add("hidden");
+      document.getElementById("page-laporan").classList.add("hidden");
+
+      // Reset Nav Colors
+      document.querySelectorAll("#bottom-nav button").forEach(b => b.className = "text-gray-400");
+
+      // Show Selected Page & Highlight Nav
+      if (tabName === 'dashboard') {
+        document.getElementById("page-dashboard").classList.remove("hidden");
+        document.getElementById("page-dashboard").classList.add("flex");
+        document.getElementById("nav-dashboard").className = "text-emerald-600 font-bold";
+      } else if (tabName === 'pengumuman') {
+        document.getElementById("page-pengumuman").classList.remove("hidden");
+        document.getElementById("nav-pengumuman").className = "text-emerald-600 font-bold";
+      } else if (tabName === 'laporan') {
+        document.getElementById("page-laporan").classList.remove("hidden");
+        document.getElementById("nav-laporan").className = "text-emerald-600 font-bold";
+      }
+    }
+
+    // --- LOGOUT ---
+    function logout() {
+      currentUser = null;
+      document.getElementById("page-dashboard").classList.add("hidden");
+      document.getElementById("page-dashboard").classList.remove("flex");
+      document.getElementById("bottom-nav").classList.add("hidden");
+      document.getElementById("page-login").classList.remove("hidden");
+    }
+  </script>
+</body>
+</html>
