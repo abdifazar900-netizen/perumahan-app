@@ -1,4 +1,3 @@
-// Service Worker khusus PWA
 self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
@@ -7,10 +6,13 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(clients.claim());
 });
 
-// Biarkan request ke Google Apps Script (API) lewat langsung tanpa di-cache
+// Paksa request API Apps Script untuk tidak pernah di-cache oleh APK
 self.addEventListener('fetch', (event) => {
   if (event.request.url.includes('script.google.com')) {
-    return; // Bypass Service Worker untuk API
+    event.respondWith(
+      fetch(event.request, { cache: "no-store" }).catch(() => {
+        return new Response(JSON.stringify({ status: "error", message: "Offline" }));
+      })
+    );
   }
-  event.respondWith(fetch(event.request));
 });
