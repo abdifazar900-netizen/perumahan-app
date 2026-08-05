@@ -573,7 +573,16 @@
     }
 
     // KONTAK PENGURUS
-    function tampilkanKontakPengurus() {
+  // 1. Deklarasikan data pengurus terlebih dahulu
+const KONTAK_PENGURUS = {
+  ketua_rt: { nama: "Bpk. Asep", wa: "6281234567890" },
+  wakil_rt: { nama: "Bpk. Dedi", wa: "6289876543210" },
+  bendahara: { nama: "Bpk. Fazar", wa: "6287788052399" },
+  dkm: { nama: "Ust. Ahmad", wa: "6281111222233" }
+};
+
+// 2. Fungsi tampilkan kontak
+function tampilkanKontakPengurus() {
   var dataPengurus = [
     { jabatan: "Ketua RT", nama: KONTAK_PENGURUS.ketua_rt.nama, wa: KONTAK_PENGURUS.ketua_rt.wa },
     { jabatan: "Wakil RT", nama: KONTAK_PENGURUS.wakil_rt.nama, wa: KONTAK_PENGURUS.wakil_rt.wa },
@@ -581,25 +590,35 @@
     { jabatan: "Ketua DKM", nama: KONTAK_PENGURUS.dkm.nama, wa: KONTAK_PENGURUS.dkm.wa }
   ];
 
-  var htmlList = dataPengurus.map(function(p) {
-    return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2.5">' +
-      '<div class="text-left">' +
-        '<p class="font-bold text-gray-800 text-sm">' + p.jabatan + '</p>' +
-        '<p class="text-xs text-gray-500">' + p.nama + '</p>' +
-      '</div>' +
-      '<a href="https://wa.me/' + p.wa + '" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1">' +
-        '<i class="fa-brands fa-whatsapp text-sm"></i> WA' +
-      '</a>' +
-    '</div>';
-  }).join('');
+  var html = '<div class="space-y-3 p-1">';
+  
+  dataPengurus.forEach(function(item) {
+    var noWa = String(item.wa || '').replace(/[^0-9]/g, '');
+    if (noWa.startsWith("0")) noWa = "62" + noWa.slice(1);
 
-  Swal.fire({
-    title: '<strong>Kontak Pengurus RT</strong>',
-    icon: 'info',
-    html: '<div class="pt-2">' + htmlList + '</div>',
-    showCloseButton: true,
-    showConfirmButton: false
+    html += 
+      '<div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">' +
+        '<div>' +
+          '<p class="text-xs text-emerald-600 font-bold">' + item.jabatan + '</p>' +
+          '<p class="text-sm font-bold text-gray-800">' + (item.nama || '-') + '</p>' +
+        '</div>' +
+        '<a href="https://wa.me/' + noWa + '" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white p-2.5 rounded-lg flex items-center justify-center">' +
+          '<i class="fa-brands fa-whatsapp text-lg"></i>' +
+        '</a>' +
+      '</div>';
   });
+
+  html += '</div>';
+
+  var container = document.getElementById("modal-kontak-body") || document.getElementById("kontak-pengurus-container");
+  if (container) {
+    container.innerHTML = html;
+  }
+
+  // Panggil fungsi buka modal kontak Anda jika ada
+  if (typeof bukaModalKontak === 'function') {
+    bukaModalKontak();
+  }
 }
 
     // KAS WARGA
