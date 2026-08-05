@@ -94,19 +94,11 @@
           </button>
         </div>
 
-        <div class="bg-white text-gray-800 p-4 rounded-xl shadow-md flex justify-between items-center">
-          <div>
-            <p class="text-xs text-gray-500 font-semibold">Status Iuran Bulan Ini</p>
-            <span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">
-              <i class="fa-solid fa-circle-check mr-1"></i> Lunas
-            </span>
-          </div>
-          <button onclick="showToast('info', 'Fitur Bayar Iuran Segera Hadir')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">
-            Bayar Kas
-          </button>
-        </div>
-      </div>
-
+        <div id="status-kas-container" class="bg-white text-gray-800 p-4 rounded-xl shadow-md flex justify-between items-center">
+  <div>
+    <p class="text-xs text-gray-500 font-semibold">Memuat Data Kas...</p>
+  </div>
+</div>
       <div class="p-5 grid grid-cols-3 gap-3 text-center">
         <button onclick="pindahTab('laporan')" class="bg-red-50 p-3 rounded-xl border border-red-100 text-red-600 flex flex-col items-center">
           <i class="fa-solid fa-triangle-exclamation text-xl mb-1"></i>
@@ -316,9 +308,10 @@
           document.getElementById("page-dashboard").classList.add("flex");
           document.getElementById("bottom-nav").classList.remove("hidden");
 
-          checkAdminRole();
-          loadPengumuman();
-          showToast('success', 'Selamat Datang, ' + currentUser.nama);
+         checkAdminRole();
+loadPengumuman();
+loadDataKasWarga(); // <-- Dipanggil di sini
+showToast('success', 'Selamat Datang, ' + currentUser.nama);
         } else {
           showToast('error', data.message);
         }
@@ -651,6 +644,53 @@ function loadPengumuman() {
         showConfirmButton: false
       });
     }
+    function formatRupiah(angka) {
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+}
+
+function loadDataKasWarga() {
+  if (!currentUser || !currentUser.no_rumah) return;
+
+  fetch(API_URL + "?action=getKasWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
+    .then(res => res.json())
+    .then(res => {
+      if (res.status === 'success') {
+        var listKas = res.data;
+        var tunggakan = listKas.filter(k => k.status === 'Belum Bayar');
+        var totalTunggakan = 0;
+        
+        tunggakan.forEach(k => totalTunggakan += Number(k.nominal));
+
+        var cardKasContainer = document.getElementById("status-kas-container");
+        if (!cardKasContainer) return;
+
+        if (tunggakan.length > 0) {
+          cardKasContainer.innerHTML = 
+            '<div>' +
+              '<p class="text-xs text-gray-500 font-semibold">Tunggakan Kas (' + tunggakan.length + ' Bulan)</p>' +
+              '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold">' +
+                '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ' + formatRupiah(totalTunggakan) +
+              '</span>' +
+            '</div>' +
+            '<button onclick="bukaModalRincianKas()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
+              'Bayar Kas' +
+            '</button>';
+        } else {
+          cardKasContainer.innerHTML = 
+            '<div>' +
+              '<p class="text-xs text-gray-500 font-semibold">Status Iuran Bulan Ini</p>' +
+              '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">' +
+                '<i class="fa-solid fa-circle-check mr-1"></i> Lunas' +
+              '</span>' +
+            '</div>' +
+            '<button onclick="showToast(\'info\', \'Iuran Kas Anda Sudah Lunas\')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
+              'Bayar Kas' +
+            '</button>';
+        }
+      }
+    })
+    .catch(err => console.error(err));
+}
   </script>
 </body>
 </html>
