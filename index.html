@@ -112,10 +112,10 @@
           <i class="fa-solid fa-triangle-exclamation text-xl mb-1"></i>
           <span class="text-xs font-semibold">Lapor Masalah</span>
         </button>
-        <button onclick="Swal.fire('Pos Satpam', 'Kontak Satpam: 0812-9999-8888', 'info')" class="bg-amber-50 p-3 rounded-xl border border-amber-100 text-amber-600 flex flex-col items-center">
-          <i class="fa-solid fa-shield-halved text-xl mb-1"></i>
-          <span class="text-xs font-semibold">Pos Satpam</span>
-        </button>
+        <button onclick="tampilkanKontakPengurus()" class="bg-amber-50 p-3 rounded-xl border border-amber-100 text-amber-600 flex flex-col items-center">
+  <i class="fa-solid fa-address-book text-xl mb-1"></i>
+  <span class="text-xs font-semibold">Pengurus D'Mutiara Residence</span>
+</button>
         <button onclick="pindahTab('pengumuman')" class="bg-blue-50 p-3 rounded-xl border border-blue-100 text-blue-600 flex flex-col items-center">
           <i class="fa-solid fa-bullhorn text-xl mb-1"></i>
           <span class="text-xs font-semibold">Pengumuman</span>
@@ -607,17 +607,53 @@ function loadPengumuman() {
       document.getElementById("adm-isi").value = "";
     }
     // Fungsi Helper Format Tanggal ke DD/MM/YYYY
-function formatTanggalIndo(tglString) {
-  if (!tglString) return "-";
-  const d = new Date(tglString);
-  if (isNaN(d.getTime())) return tglString; // jika format teks biasa
+//// Fungsi Helper Format Tanggal ke DD/MM/YYYY
+    function formatTanggalIndo(tglString) {
+      if (!tglString) return "-";
+      var d = new Date(tglString);
+      if (isNaN(d.getTime())) return tglString;
 
-  const tgl = String(d.getDate()).padStart(2, '0');
-  const bln = String(d.getMonth() + 1).padStart(2, '0');
-  const thn = d.getFullYear();
+      var tgl = String(d.getDate());
+      if (tgl.length < 2) tgl = '0' + tgl;
+      var bln = String(d.getMonth() + 1);
+      if (bln.length < 2) bln = '0' + bln;
+      var thn = d.getFullYear();
 
-  return `${tgl}/${bln}/${thn}`;
-}
+      return tgl + '/' + bln + '/' + thn;
+    }
+
+    // Fungsi Pop-up Kontak Pengurus RT
+    function tampilkanKontakPengurus() {
+      var dataPengurus = [
+        { jabatan: "Ketua RT", nama: "Pak Hilman (Blok B35)", wa: "6281234567890" },
+        { jabatan: "Wakil RT", nama: "Pak Coba (Blok B34)", wa: "6281234567891" },
+        { jabatan: "Bendahara", nama: "Pak Suryaman (Blok B30)", wa: "6281234567892" }
+        { jabatan: "Ketua DKM", nama: "Pak Deden (Blok B30)", wa: "6281234567893" }
+      ];
+
+      var htmlList = dataPengurus.map(function(p) {
+        return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2.5">' +
+          '<div class="text-left">' +
+            '<p class="font-bold text-gray-800 text-sm">' + p.jabatan + '</p>' +
+            '<p class="text-xs text-gray-500">' + p.nama + '</p>' +
+          '</div>' +
+          '<a href="https://wa.me/' + p.wa + '" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1">' +
+            '<i class="fa-brands fa-whatsapp text-sm"></i> WA' +
+          '</a>' +
+        '</div>';
+      }).join('');
+
+      Swal.fire({
+        title: '<strong>Kontak Pengurus RT</strong>',
+        icon: 'info',
+        html: '<div class="pt-2">' + htmlList + '</div>',
+        showCloseButton: true,
+        showConfirmButton: false
+      });
+    }
+  </script>
+</body>
+</html>
   </script>
 </body>
 </html>
