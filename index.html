@@ -329,60 +329,70 @@
       });
     }
 
-    // LOAD PENGUMUMAN
-    function loadPengumuman() {
-      fetch(API_URL + "?action=getPengumuman")
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === 'success') {
-            const containerHome = document.getElementById('list-pengumuman-home');
-            const containerFull = document.getElementById('list-pengumuman-full');
-            
-            if (containerHome) containerHome.innerHTML = '';
-            if (containerFull) containerFull.innerHTML = '';
+   function formatTanggalIndo(tglString) {
+  if (!tglString) return "-";
+  const d = new Date(tglString);
+  if (isNaN(d.getTime())) return tglString;
 
-            if (!res.data || res.data.length === 0) {
-              const emptyMsg = `<p class="text-xs text-gray-400 italic text-center py-4">Belum ada pengumuman.</p>`;
-              if (containerHome) containerHome.innerHTML = emptyMsg;
-              if (containerFull) containerFull.innerHTML = emptyMsg;
-              return;
-            }
+  const tgl = String(d.getDate()).padStart(2, '0');
+  const bln = String(d.getMonth() + 1).padStart(2, '0');
+  const thn = d.getFullYear();
 
-            res.data.forEach((item, index) => {
-              let actionButtons = '';
-              if (currentUser && currentUser.role && ['admin', 'rt'].includes(currentUser.role.toLowerCase())) {
-                actionButtons = `
-                  <div class="flex gap-3 mt-3 pt-2 border-t border-gray-100 text-xs">
-                    <button onclick="openModalEdit('${item.id_info}', \`${item.judul}\`, \`${item.isi}\`, '${item.kategori}')" class="text-blue-600 font-semibold hover:underline flex items-center gap-1">
-                      ✏️ Edit
-                    </button>
-                    <button onclick="hapusPengumuman('${item.id_info}')" class="text-red-600 font-semibold hover:underline flex items-center gap-1">
-                      🗑️ Hapus
-                    </button>
-                  </div>
-                `;
-              }
+  return `${tgl}/${bln}/${thn}`;
+}
 
-              const cardHtml = `
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-3">
-                  <div class="flex justify-between items-center mb-1">
-                    <span class="text-xs bg-emerald-100 text-emerald-700 font-medium px-2 py-0.5 rounded-full">${item.kategori}</span>
-                    <span class="text-xs text-gray-400">${item.tanggal}</span>
-                  </div>
-                  <h3 class="font-bold text-gray-800 text-sm mt-1">${item.judul}</h3>
-                  <p class="text-xs text-gray-600 mt-1">${item.isi}</p>
-                  ${actionButtons}
-                </div>
-              `;
+function loadPengumuman() {
+  fetch(API_URL + "?action=getPengumuman")
+    .then(res => res.json())
+    .then(res => {
+      if (res.status === 'success') {
+        const containerHome = document.getElementById('list-pengumuman-home');
+        const containerFull = document.getElementById('list-pengumuman-full');
+        
+        if (containerHome) containerHome.innerHTML = '';
+        if (containerFull) containerFull.innerHTML = '';
 
-              if (index < 2 && containerHome) containerHome.innerHTML += cardHtml;
-              if (containerFull) containerFull.innerHTML += cardHtml;
-            });
+        if (!res.data || res.data.length === 0) {
+          const emptyMsg = `<p class="text-xs text-gray-400 italic text-center py-4">Belum ada pengumuman.</p>`;
+          if (containerHome) containerHome.innerHTML = emptyMsg;
+          if (containerFull) containerFull.innerHTML = emptyMsg;
+          return;
+        }
+
+        res.data.forEach((item, index) => {
+          let actionButtons = '';
+          if (currentUser && currentUser.role && ['admin', 'rt'].includes(currentUser.role.toLowerCase())) {
+            actionButtons = `
+              <div class="flex gap-3 mt-3 pt-2 border-t border-gray-100 text-xs">
+                <button onclick="openModalEdit('${item.id_info}', \`${item.judul}\`, \`${item.isi}\`, '${item.kategori}')" class="text-blue-600 font-semibold hover:underline flex items-center gap-1">
+                  ✏️ Edit
+                </button>
+                <button onclick="hapusPengumuman('${item.id_info}')" class="text-red-600 font-semibold hover:underline flex items-center gap-1">
+                  🗑️ Hapus
+                </button>
+              </div>
+            `;
           }
-        })
-        .catch(err => console.error(err));
-    }
 
+          const cardHtml = `
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-3">
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-xs bg-emerald-100 text-emerald-700 font-medium px-2 py-0.5 rounded-full">${item.kategori}</span>
+                <span class="text-xs text-gray-400 font-medium">${formatTanggalIndo(item.tanggal)}</span>
+              </div>
+              <h3 class="font-bold text-gray-800 text-sm mt-1">${item.judul}</h3>
+              <p class="text-xs text-gray-600 mt-1">${item.isi}</p>
+              ${actionButtons}
+            </div>
+          `;
+
+          if (index < 2 && containerHome) containerHome.innerHTML += cardHtml;
+          if (containerFull) containerFull.innerHTML += cardHtml;
+        });
+      }
+    })
+    .catch(err => console.error(err));
+}
     // TAMBAH PENGUMUMAN
     function simpanPengumumanAdmin() {
       const kategori = document.getElementById("adm-kategori").value;
@@ -596,6 +606,18 @@
       document.getElementById("adm-judul").value = "";
       document.getElementById("adm-isi").value = "";
     }
+    // Fungsi Helper Format Tanggal ke DD/MM/YYYY
+function formatTanggalIndo(tglString) {
+  if (!tglString) return "-";
+  const d = new Date(tglString);
+  if (isNaN(d.getTime())) return tglString; // jika format teks biasa
+
+  const tgl = String(d.getDate()).padStart(2, '0');
+  const bln = String(d.getMonth() + 1).padStart(2, '0');
+  const thn = d.getFullYear();
+
+  return `${tgl}/${bln}/${thn}`;
+}
   </script>
 </body>
 </html>
