@@ -256,10 +256,8 @@
   <!-- JAVASCRIPT & INTEGRASI BACKEND -->
   <script>
    const API_URL = "https://script.google.com/macros/s/AKfycbxYwsbixp0Wvuily2-I48hQhXMdL42T4JkkSlB-qX5ySpsnHzGnxqDhOXwnsQdEVIgGnA/exec";
-
     let currentUser = null;
     let dataKasUser = [];
-
     // FUNGSI UTILITY SWEETALERT2
     function showLoading(pesan = "Memproses data...") {
       Swal.fire({
@@ -605,49 +603,66 @@
 }
 
     // KAS WARGA
-    function loadDataKasWarga() {
-      if (!currentUser || !currentUser.no_rumah) return;
+   function loadDataKasWarga() {
+  if (!currentUser || !currentUser.no_rumah) return;
 
-      fetch(API_URL + "?action=getKasWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === 'success') {
-            dataKasUser = res.data || [];
-            var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
-            var totalTunggakan = 0;
-            
-            tunggakan.forEach(k => totalTunggakan += Number(k.nominal || 0));
+  // Pastikan variabel URL mengarah ke variabel global API/SCRIPT URL yang aktif
+  var urlEndpoint = (typeof API_URL !== 'undefined' ? API_URL : SCRIPT_URL);
 
-            var cardKasContainer = document.getElementById("status-kas-container");
-            if (!cardKasContainer) return;
+  fetch(urlEndpoint + "?action=getKasWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
+    .then(res => {
+      // Validasi apakah respons yang didapat adalah JSON/Valid
+      if (!res.ok) {
+        throw new Error("HTTP Status " + res.status + " (Cek URL Deployment)");
+      }
+      return res.json();
+    })
+    .then(res => {
+      if (res.status === 'success') {
+        dataKasUser = res.data || [];
+        var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
+        var totalTunggakan = 0;
+        
+        tunggakan.forEach(k => totalTunggakan += Number(k.nominal || 0));
 
-            if (tunggakan.length > 0) {
-              cardKasContainer.innerHTML = 
-                '<div>' +
-                  '<p class="text-xs text-gray-500 font-semibold">Tunggakan Kas (' + tunggakan.length + ' Bulan)</p>' +
-                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold">' +
-                    '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ' + formatRupiah(totalTunggakan) +
-                  '</span>' +
-                '</div>' +
-                '<button onclick="bukaModalRincianKas()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
-                  'Bayar Kas' +
-                '</button>';
-            } else {
-              cardKasContainer.innerHTML = 
-                '<div>' +
-                  '<p class="text-xs text-gray-500 font-semibold">Status Iuran Bulan Ini</p>' +
-                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">' +
-                    '<i class="fa-solid fa-circle-check mr-1"></i> Lunas' +
-                  '</span>' +
-                '</div>' +
-                '<button onclick="showToast(\'info\', \'Iuran Kas Anda Sudah Lunas\')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
-                  'Bayar Kas' +
-                '</button>';
-            }
-          }
-        })
-        .catch(err => console.error("Error load kas:", err));
-    }
+        var cardKasContainer = document.getElementById("status-kas-container");
+        if (!cardKasContainer) return;
+
+        if (tunggakan.length > 0) {
+          cardKasContainer.innerHTML = 
+            '<div>' +
+              '<p class="text-xs text-gray-500 font-semibold">Tunggakan Kas (' + tunggakan.length + ' Bulan)</p>' +
+              '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold">' +
+                '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ' + formatRupiah(totalTunggakan) +
+              '</span>' +
+            '</div>' +
+            '<button onclick="bukaModalRincianKas()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
+              'Bayar Kas' +
+            '</button>';
+        } else {
+          cardKasContainer.innerHTML = 
+            '<div>' +
+              '<p class="text-xs text-gray-500 font-semibold">Status Iuran Bulan Ini</p>' +
+              '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">' +
+                '<i class="fa-solid fa-circle-check mr-1"></i> Lunas' +
+              '</span>' +
+            '</div>' +
+            '<button onclick="showToast(\'info\', \'Iuran Kas Anda Sudah Lunas\')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
+              'Bayar Kas' +
+            '</button>';
+        }
+      } else {
+        console.warn("Respon Kas Gagal:", res.message);
+      }
+    })
+    .catch(err => {
+      console.error("Error load kas:", err);
+      var cardKasContainer = document.getElementById("status-kas-container");
+      if (cardKasContainer) {
+        cardKasContainer.innerHTML = '<p class="text-xs text-red-500 font-semibold">Gagal memuat data kas</p>';
+      }
+    });
+}
 
     function bukaModalRincianKas() {
       var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
