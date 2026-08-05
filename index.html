@@ -101,14 +101,21 @@
         </div>
       </div>
 
+     <!-- GRID MENU UTAMA (DENGAN PANIC BUTTON) -->
       <div class="p-5 grid grid-cols-3 gap-3 text-center">
+        <!-- TOMBOL PANIC BUTTON (MENCOLOK DENGAN ANIMASI PULSE) -->
+        <button onclick="tekanPanicButton()" class="col-span-3 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white p-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2 font-bold transition transform active:scale-95">
+          <i class="fa-solid fa-triangle-exclamation text-xl animate-pulse"></i>
+          <span>🚨 TOMBOL DARURAT (PANIC)</span>
+        </button>
+
         <button onclick="pindahTab('laporan')" class="bg-red-50 p-3 rounded-xl border border-red-100 text-red-600 flex flex-col items-center">
-          <i class="fa-solid fa-triangle-exclamation text-xl mb-1"></i>
+          <i class="fa-solid fa-file-circle-exclamation text-xl mb-1"></i>
           <span class="text-xs font-semibold">Lapor Masalah</span>
         </button>
         <button onclick="tampilkanKontakPengurus()" class="bg-amber-50 p-3 rounded-xl border border-amber-100 text-amber-600 flex flex-col items-center">
           <i class="fa-solid fa-address-book text-xl mb-1"></i>
-          <span class="text-xs font-semibold">Pengurus D'Mutiara Residence</span>
+          <span class="text-xs font-semibold">Pengurus D'Mutiara</span>
         </button>
         <button onclick="pindahTab('pengumuman')" class="bg-blue-50 p-3 rounded-xl border border-blue-100 text-blue-600 flex flex-col items-center">
           <i class="fa-solid fa-bullhorn text-xl mb-1"></i>
@@ -733,6 +740,52 @@
       document.getElementById("modal-pengumuman").classList.add("hidden");
       document.getElementById("adm-judul").value = "";
       document.getElementById("adm-isi").value = "";
+    }
+    // FUNGSI TEKAN PANIC BUTTON
+    function tekanPanicButton() {
+      Swal.fire({
+        title: '<strong>🚨 TOMBOL DARURAT</strong>',
+        html: '<p class="text-sm text-gray-600">Tekan tombol di bawah jika Anda membutuhkan bantuan darurat dari warga/pengurus sekarang!</p>',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: '🚨 YA, KIRIM SINYAL DARURAT!',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          showLoading("Mengirimkan sinyal darurat...");
+
+          fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              action: "panicButton",
+              nama: currentUser ? currentUser.nama : "Warga",
+              no_rumah: currentUser ? currentUser.no_rumah : "-"
+            })
+          })
+          .then(res => res.json())
+          .then(data => {
+            Swal.close();
+            if (data.status === 'success') {
+              Swal.fire({
+                title: 'Sinyal Darurat Diproses!',
+                text: 'Sinyal berhasil diproses untuk ' + data.total_target + ' warga terdaftar.',
+                icon: 'success',
+                confirmButtonColor: '#059669'
+              });
+            } else {
+              showToast('error', data.message);
+            }
+          })
+          .catch(err => {
+            Swal.close();
+            showToast('error', 'Gagal memicu sinyal darurat: ' + err.message);
+          });
+        }
+      });
     }
   </script>
 </body>
