@@ -697,6 +697,7 @@ function loadPengumuman() {
     }
 
     // Fungsi Pop-up Rincian Tunggakan Kas & WA Konfirmasi
+    // Fungsi Pop-up Rincian Tunggakan Kas & WA Konfirmasi
     function bukaModalRincianKas() {
       var tunggakan = dataKasUser.filter(k => k.status === 'Belum Bayar');
       
@@ -706,9 +707,15 @@ function loadPengumuman() {
       }
 
       var htmlItems = tunggakan.map(function(k) {
+        // Ambil format DD/MM/YYYY dari helper
+        var tglFull = formatTanggalIndo(k.bulan_tahun); 
+        
+        // Ambil hanya MM/YYYY (misal: "01/07/2026" menjadi "07/2026")
+        var labelBulanTahun = tglFull.includes('/') ? tglFull.split('/').slice(1).join('/') : tglFull;
+        
         return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2 text-sm">' +
           '<div class="text-left">' +
-            '<p class="font-bold text-gray-800">Iuran Bulan ' + k.bulan_tahun + '</p>' +
+            '<p class="font-bold text-gray-800">Iuran Bulan ' + labelBulanTahun + '</p>' +
             '<p class="text-xs text-red-600 font-semibold">Belum Dibayar</p>' +
           '</div>' +
           '<span class="font-bold text-gray-700">' + formatRupiah(k.nominal) + '</span>' +
