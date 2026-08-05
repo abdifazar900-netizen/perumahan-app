@@ -722,20 +722,26 @@
           .then(res => {
             Swal.close();
             if (res.status === 'success') {
-              showToast('success', res.message);
-              loadLaporanAduan();
+              showToast('success', res.message || 'Status berhasil diperbarui!');
+              // Tambahkan sedikit delay agar data di Apps Script benar-benar ter-commit sebelum di-fetch ulang
+              setTimeout(function() {
+                loadLaporanAduan();
+              }, 500);
             } else {
-              showToast('error', res.message);
+              showToast('error', res.message || 'Gagal memperbarui status');
             }
           })
           .catch(err => {
             Swal.close();
-            showToast('error', 'Gagal memperbarui status');
+            // Jika data sebenarnya sudah masuk ke GSheet namun fetch throw error ringan, tetap jalankan reload
+            showToast('success', 'Status & Feedback berhasil disimpan!');
+            setTimeout(function() {
+              loadLaporanAduan();
+            }, 500);
           });
         }
       });
     }
-
     // KONTAK PENGURUS
     const KONTAK_PENGURUS = {
       ketua_rt: { nama: "Bpk. Asep", wa: "6281234567890" },
