@@ -95,19 +95,21 @@
         </div>
 
         <div id="status-kas-container" class="bg-white text-gray-800 p-4 rounded-xl shadow-md flex justify-between items-center">
-  <div>
-    <p class="text-xs text-gray-500 font-semibold">Memuat Data Kas...</p>
-  </div>
-</div>
+          <div>
+            <p class="text-xs text-gray-500 font-semibold">Memuat Data Kas...</p>
+          </div>
+        </div>
+      </div>
+
       <div class="p-5 grid grid-cols-3 gap-3 text-center">
         <button onclick="pindahTab('laporan')" class="bg-red-50 p-3 rounded-xl border border-red-100 text-red-600 flex flex-col items-center">
           <i class="fa-solid fa-triangle-exclamation text-xl mb-1"></i>
           <span class="text-xs font-semibold">Lapor Masalah</span>
         </button>
         <button onclick="tampilkanKontakPengurus()" class="bg-amber-50 p-3 rounded-xl border border-amber-100 text-amber-600 flex flex-col items-center">
-  <i class="fa-solid fa-address-book text-xl mb-1"></i>
-  <span class="text-xs font-semibold">Pengurus D'Mutiara Residence</span>
-</button>
+          <i class="fa-solid fa-address-book text-xl mb-1"></i>
+          <span class="text-xs font-semibold">Pengurus D'Mutiara Residence</span>
+        </button>
         <button onclick="pindahTab('pengumuman')" class="bg-blue-50 p-3 rounded-xl border border-blue-100 text-blue-600 flex flex-col items-center">
           <i class="fa-solid fa-bullhorn text-xl mb-1"></i>
           <span class="text-xs font-semibold">Pengumuman</span>
@@ -246,10 +248,10 @@
 
   <!-- JAVASCRIPT & INTEGRASI BACKEND -->
   <script>
-    // PASTI-KAN URL DEPLOYMENT ANDA SESUAI DI SINI
     const API_URL = "https://script.google.com/macros/s/AKfycbxYwsbixp0Wvuily2-I48hQhXMdL42T4JkkSlB-qX5ySpsnHzGnxqDhOXwnsQdEVIgGnA/exec";
 
     let currentUser = null;
+    let dataKasUser = [];
 
     // FUNGSI UTILITY SWEETALERT2
     function showLoading(pesan = "Memproses data...") {
@@ -276,6 +278,34 @@
         icon: icon,
         title: message
       });
+    }
+
+    // FORMATTING HELPERS
+    function formatTanggalIndo(tglString) {
+      if (!tglString) return "-";
+      var d = new Date(tglString);
+      if (isNaN(d.getTime())) return tglString;
+
+      var tgl = String(d.getDate()).padStart(2, '0');
+      var bln = String(d.getMonth() + 1).padStart(2, '0');
+      var thn = d.getFullYear();
+
+      return tgl + '/' + bln + '/' + thn;
+    }
+
+    function formatBulanTahun(val) {
+      if (!val) return "-";
+      var d = new Date(val);
+      if (!isNaN(d.getTime())) {
+        var bln = String(d.getMonth() + 1).padStart(2, '0');
+        var thn = d.getFullYear();
+        return bln + '/' + thn;
+      }
+      return String(val);
+    }
+
+    function formatRupiah(angka) {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
     }
 
     // LOGIN
@@ -308,10 +338,10 @@
           document.getElementById("page-dashboard").classList.add("flex");
           document.getElementById("bottom-nav").classList.remove("hidden");
 
-         checkAdminRole();
-loadPengumuman();
-loadDataKasWarga(); // <-- Dipanggil di sini
-showToast('success', 'Selamat Datang, ' + currentUser.nama);
+          checkAdminRole();
+          loadPengumuman();
+          loadDataKasWarga();
+          showToast('success', 'Selamat Datang, ' + currentUser.nama);
         } else {
           showToast('error', data.message);
         }
@@ -322,71 +352,60 @@ showToast('success', 'Selamat Datang, ' + currentUser.nama);
       });
     }
 
-   function formatTanggalIndo(tglString) {
-  if (!tglString) return "-";
-  const d = new Date(tglString);
-  if (isNaN(d.getTime())) return tglString;
+    // PENGUMUMAN
+    function loadPengumuman() {
+      fetch(API_URL + "?action=getPengumuman")
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success') {
+            const containerHome = document.getElementById('list-pengumuman-home');
+            const containerFull = document.getElementById('list-pengumuman-full');
+            
+            if (containerHome) containerHome.innerHTML = '';
+            if (containerFull) containerFull.innerHTML = '';
 
-  const tgl = String(d.getDate()).padStart(2, '0');
-  const bln = String(d.getMonth() + 1).padStart(2, '0');
-  const thn = d.getFullYear();
+            if (!res.data || res.data.length === 0) {
+              const emptyMsg = `<p class="text-xs text-gray-400 italic text-center py-4">Belum ada pengumuman.</p>`;
+              if (containerHome) containerHome.innerHTML = emptyMsg;
+              if (containerFull) containerFull.innerHTML = emptyMsg;
+              return;
+            }
 
-  return `${tgl}/${bln}/${thn}`;
-}
+            res.data.forEach((item, index) => {
+              let actionButtons = '';
+              if (currentUser && currentUser.role && ['admin', 'rt'].includes(currentUser.role.toLowerCase())) {
+                actionButtons = `
+                  <div class="flex gap-3 mt-3 pt-2 border-t border-gray-100 text-xs">
+                    <button onclick="openModalEdit('${item.id_info}', \`${item.judul}\`, \`${item.isi}\`, '${item.kategori}')" class="text-blue-600 font-semibold hover:underline flex items-center gap-1">
+                      ✏️ Edit
+                    </button>
+                    <button onclick="hapusPengumuman('${item.id_info}')" class="text-red-600 font-semibold hover:underline flex items-center gap-1">
+                      🗑️ Hapus
+                    </button>
+                  </div>
+                `;
+              }
 
-function loadPengumuman() {
-  fetch(API_URL + "?action=getPengumuman")
-    .then(res => res.json())
-    .then(res => {
-      if (res.status === 'success') {
-        const containerHome = document.getElementById('list-pengumuman-home');
-        const containerFull = document.getElementById('list-pengumuman-full');
-        
-        if (containerHome) containerHome.innerHTML = '';
-        if (containerFull) containerFull.innerHTML = '';
+              const cardHtml = `
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-3">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs bg-emerald-100 text-emerald-700 font-medium px-2 py-0.5 rounded-full">${item.kategori}</span>
+                    <span class="text-xs text-gray-400 font-medium">${formatTanggalIndo(item.tanggal)}</span>
+                  </div>
+                  <h3 class="font-bold text-gray-800 text-sm mt-1">${item.judul}</h3>
+                  <p class="text-xs text-gray-600 mt-1">${item.isi}</p>
+                  ${actionButtons}
+                </div>
+              `;
 
-        if (!res.data || res.data.length === 0) {
-          const emptyMsg = `<p class="text-xs text-gray-400 italic text-center py-4">Belum ada pengumuman.</p>`;
-          if (containerHome) containerHome.innerHTML = emptyMsg;
-          if (containerFull) containerFull.innerHTML = emptyMsg;
-          return;
-        }
-
-        res.data.forEach((item, index) => {
-          let actionButtons = '';
-          if (currentUser && currentUser.role && ['admin', 'rt'].includes(currentUser.role.toLowerCase())) {
-            actionButtons = `
-              <div class="flex gap-3 mt-3 pt-2 border-t border-gray-100 text-xs">
-                <button onclick="openModalEdit('${item.id_info}', \`${item.judul}\`, \`${item.isi}\`, '${item.kategori}')" class="text-blue-600 font-semibold hover:underline flex items-center gap-1">
-                  ✏️ Edit
-                </button>
-                <button onclick="hapusPengumuman('${item.id_info}')" class="text-red-600 font-semibold hover:underline flex items-center gap-1">
-                  🗑️ Hapus
-                </button>
-              </div>
-            `;
+              if (index < 2 && containerHome) containerHome.innerHTML += cardHtml;
+              if (containerFull) containerFull.innerHTML += cardHtml;
+            });
           }
+        })
+        .catch(err => console.error(err));
+    }
 
-          const cardHtml = `
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-3">
-              <div class="flex justify-between items-center mb-1">
-                <span class="text-xs bg-emerald-100 text-emerald-700 font-medium px-2 py-0.5 rounded-full">${item.kategori}</span>
-                <span class="text-xs text-gray-400 font-medium">${formatTanggalIndo(item.tanggal)}</span>
-              </div>
-              <h3 class="font-bold text-gray-800 text-sm mt-1">${item.judul}</h3>
-              <p class="text-xs text-gray-600 mt-1">${item.isi}</p>
-              ${actionButtons}
-            </div>
-          `;
-
-          if (index < 2 && containerHome) containerHome.innerHTML += cardHtml;
-          if (containerFull) containerFull.innerHTML += cardHtml;
-        });
-      }
-    })
-    .catch(err => console.error(err));
-}
-    // TAMBAH PENGUMUMAN
     function simpanPengumumanAdmin() {
       const kategori = document.getElementById("adm-kategori").value;
       const judul = document.getElementById("adm-judul").value;
@@ -426,7 +445,6 @@ function loadPengumuman() {
       });
     }
 
-    // EDIT PENGUMUMAN
     function openModalEdit(idInfo, judul, isi, kategori) {
       document.getElementById("edit-id-info").value = idInfo;
       document.getElementById("edit-judul").value = judul;
@@ -475,7 +493,6 @@ function loadPengumuman() {
       });
     }
 
-    // HAPUS PENGUMUMAN
     function hapusPengumuman(idInfo) {
       Swal.fire({
         title: 'Hapus Pengumuman?',
@@ -550,6 +567,124 @@ function loadPengumuman() {
       });
     }
 
+    // KONTAK PENGURUS
+    function tampilkanKontakPengurus() {
+      var dataPengurus = [
+        { jabatan: "Ketua RT", nama: "Pak Hilman (Blok B35)", wa: "6281234567890" },
+        { jabatan: "Wakil RT", nama: "Pak Coba (Blok B34)", wa: "6281234567891" },
+        { jabatan: "Bendahara", nama: "Pak Suryaman (Blok B30)", wa: "6281234567892" },
+        { jabatan: "Ketua DKM", nama: "Pak Deden (Blok B30)", wa: "6281234567893" }
+      ];
+
+      var htmlList = dataPengurus.map(function(p) {
+        return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2.5">' +
+          '<div class="text-left">' +
+            '<p class="font-bold text-gray-800 text-sm">' + p.jabatan + '</p>' +
+            '<p class="text-xs text-gray-500">' + p.nama + '</p>' +
+          '</div>' +
+          '<a href="https://wa.me/' + p.wa + '" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1">' +
+            '<i class="fa-brands fa-whatsapp text-sm"></i> WA' +
+          '</a>' +
+        '</div>';
+      }).join('');
+
+      Swal.fire({
+        title: '<strong>Kontak Pengurus RT</strong>',
+        icon: 'info',
+        html: '<div class="pt-2">' + htmlList + '</div>',
+        showCloseButton: true,
+        showConfirmButton: false
+      });
+    }
+
+    // KAS WARGA
+    function loadDataKasWarga() {
+      if (!currentUser || !currentUser.no_rumah) return;
+
+      fetch(API_URL + "?action=getKasWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success') {
+            dataKasUser = res.data || [];
+            var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
+            var totalTunggakan = 0;
+            
+            tunggakan.forEach(k => totalTunggakan += Number(k.nominal || 0));
+
+            var cardKasContainer = document.getElementById("status-kas-container");
+            if (!cardKasContainer) return;
+
+            if (tunggakan.length > 0) {
+              cardKasContainer.innerHTML = 
+                '<div>' +
+                  '<p class="text-xs text-gray-500 font-semibold">Tunggakan Kas (' + tunggakan.length + ' Bulan)</p>' +
+                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold">' +
+                    '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ' + formatRupiah(totalTunggakan) +
+                  '</span>' +
+                '</div>' +
+                '<button onclick="bukaModalRincianKas()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
+                  'Bayar Kas' +
+                '</button>';
+            } else {
+              cardKasContainer.innerHTML = 
+                '<div>' +
+                  '<p class="text-xs text-gray-500 font-semibold">Status Iuran Bulan Ini</p>' +
+                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">' +
+                    '<i class="fa-solid fa-circle-check mr-1"></i> Lunas' +
+                  '</span>' +
+                '</div>' +
+                '<button onclick="showToast(\'info\', \'Iuran Kas Anda Sudah Lunas\')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
+                  'Bayar Kas' +
+                '</button>';
+            }
+          }
+        })
+        .catch(err => console.error("Error load kas:", err));
+    }
+
+    function bukaModalRincianKas() {
+      var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
+      
+      if (tunggakan.length === 0) {
+        showToast('info', 'Tidak ada tunggakan kas');
+        return;
+      }
+
+      var htmlItems = tunggakan.map(function(k) {
+        var labelBulanTahun = formatBulanTahun(k.bulan_tahun);
+        
+        return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2 text-sm">' +
+          '<div class="text-left">' +
+            '<p class="font-bold text-gray-800">Iuran Bulan ' + labelBulanTahun + '</p>' +
+            '<p class="text-xs text-red-600 font-semibold">Belum Dibayar</p>' +
+          '</div>' +
+          '<span class="font-bold text-gray-700">' + formatRupiah(k.nominal || 0) + '</span>' +
+        '</div>';
+      }).join('');
+
+      var total = tunggakan.reduce((sum, item) => sum + Number(item.nominal || 0), 0);
+
+      Swal.fire({
+        title: '<strong>Rincian Tunggakan Kas</strong>',
+        icon: 'warning',
+        html: '<div class="pt-2 text-left">' +
+            htmlItems +
+            '<div class="mt-3 p-3 bg-red-50 rounded-lg border border-red-200 flex justify-between items-center font-bold text-sm text-red-800">' +
+              '<span>Total Tagihan:</span>' +
+              '<span>' + formatRupiah(total) + '</span>' +
+            '</div>' +
+          '</div>',
+        showCloseButton: true,
+        confirmButtonText: '<i class="fa-brands fa-whatsapp mr-1"></i> Konfirmasi via Bendahara',
+        confirmButtonColor: '#059669'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          var pesanWA = "Halo Bendahara, saya dari Blok " + currentUser.no_rumah + " ingin mengonfirmasi pembayaran kas tunggakan sebesar " + formatRupiah(total);
+          window.open("https://wa.me/6281234567892?text=" + encodeURIComponent(pesanWA), "_blank");
+        }
+      });
+    }
+
     // NAVIGATION & MODAL HELPERS
     function pindahTab(tabName) {
       document.getElementById("page-dashboard").classList.add("hidden");
@@ -599,154 +734,6 @@ function loadPengumuman() {
       document.getElementById("adm-judul").value = "";
       document.getElementById("adm-isi").value = "";
     }
-    // Fungsi Helper Format Tanggal ke DD/MM/YYYY
-//// Fungsi Helper Format Tanggal ke DD/MM/YYYY
-    function formatTanggalIndo(tglString) {
-      if (!tglString) return "-";
-      var d = new Date(tglString);
-      if (isNaN(d.getTime())) return tglString;
-
-      var tgl = String(d.getDate());
-      if (tgl.length < 2) tgl = '0' + tgl;
-      var bln = String(d.getMonth() + 1);
-      if (bln.length < 2) bln = '0' + bln;
-      var thn = d.getFullYear();
-
-      return tgl + '/' + bln + '/' + thn;
-    }
-
-    // Fungsi Pop-up Kontak Pengurus RT
-    function tampilkanKontakPengurus() {
-      var dataPengurus = [
-        { jabatan: "Ketua RT", nama: "Pak Hilman (Blok B35)", wa: "6281234567890" },
-        { jabatan: "Wakil RT", nama: "Pak Coba (Blok B34)", wa: "6281234567891" },
-        { jabatan: "Bendahara", nama: "Pak Suryaman (Blok B30)", wa: "6281234567892" },
-        { jabatan: "Ketua DKM", nama: "Pak Deden (Blok B30)", wa: "6281234567893" }
-      ];
-
-      var htmlList = dataPengurus.map(function(p) {
-        return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2.5">' +
-          '<div class="text-left">' +
-            '<p class="font-bold text-gray-800 text-sm">' + p.jabatan + '</p>' +
-            '<p class="text-xs text-gray-500">' + p.nama + '</p>' +
-          '</div>' +
-          '<a href="https://wa.me/' + p.wa + '" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1">' +
-            '<i class="fa-brands fa-whatsapp text-sm"></i> WA' +
-          '</a>' +
-        '</div>';
-      }).join('');
-
-      Swal.fire({
-        title: '<strong>Kontak Pengurus RT</strong>',
-        icon: 'info',
-        html: '<div class="pt-2">' + htmlList + '</div>',
-        showCloseButton: true,
-        showConfirmButton: false
-      });
-    }
-    function formatRupiah(angka) {
-  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
-}
-
-// Global Variabel Simpan Data Kas User
-    var dataKasUser = [];
-
-    // Fungsi Load Data Kas Sesuai Rumah User Login
-    function loadDataKasWarga() {
-      if (!currentUser || !currentUser.no_rumah) return;
-
-      fetch(API_URL + "?action=getKasWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === 'success') {
-            dataKasUser = res.data; // Simpan ke variabel global
-            var tunggakan = dataKasUser.filter(k => k.status === 'Belum Bayar');
-            var totalTunggakan = 0;
-            
-            tunggakan.forEach(k => totalTunggakan += Number(k.nominal));
-
-            var cardKasContainer = document.getElementById("status-kas-container");
-            if (!cardKasContainer) return;
-
-            if (tunggakan.length > 0) {
-              cardKasContainer.innerHTML = 
-                '<div>' +
-                  '<p class="text-xs text-gray-500 font-semibold">Tunggakan Kas (' + tunggakan.length + ' Bulan)</p>' +
-                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold">' +
-                    '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ' + formatRupiah(totalTunggakan) +
-                  '</span>' +
-                '</div>' +
-                '<button onclick="bukaModalRincianKas()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
-                  'Bayar Kas' +
-                '</button>';
-            } else {
-              cardKasContainer.innerHTML = 
-                '<div>' +
-                  '<p class="text-xs text-gray-500 font-semibold">Status Iuran Bulan Ini</p>' +
-                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">' +
-                    '<i class="fa-solid fa-circle-check mr-1"></i> Lunas' +
-                  '</span>' +
-                '</div>' +
-                '<button onclick="showToast(\'info\', \'Iuran Kas Anda Sudah Lunas\')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
-                  'Bayar Kas' +
-                '</button>';
-            }
-          }
-        })
-        .catch(err => console.error(err));
-    }
-
-    // Fungsi Pop-up Rincian Tunggakan Kas & WA Konfirmasi
-    // Fungsi Pop-up Rincian Tunggakan Kas & WA Konfirmasi
-    function bukaModalRincianKas() {
-      var tunggakan = dataKasUser.filter(k => k.status === 'Belum Bayar');
-      
-      if (tunggakan.length === 0) {
-        showToast('info', 'Tidak ada tunggakan kas');
-        return;
-      }
-
-      var htmlItems = tunggakan.map(function(k) {
-        // Ambil format DD/MM/YYYY dari helper
-        var tglFull = formatTanggalIndo(k.bulan_tahun); 
-        
-        // Ambil hanya MM/YYYY (misal: "01/07/2026" menjadi "07/2026")
-        var labelBulanTahun = tglFull.includes('/') ? tglFull.split('/').slice(1).join('/') : tglFull;
-        
-        return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2 text-sm">' +
-          '<div class="text-left">' +
-            '<p class="font-bold text-gray-800">Iuran Bulan ' + labelBulanTahun + '</p>' +
-            '<p class="text-xs text-red-600 font-semibold">Belum Dibayar</p>' +
-          '</div>' +
-          '<span class="font-bold text-gray-700">' + formatRupiah(k.nominal) + '</span>' +
-        '</div>';
-      }).join('');
-
-      var total = tunggakan.reduce((sum, item) => sum + Number(item.nominal), 0);
-
-      Swal.fire({
-        title: '<strong>Rincian Tunggakan Kas</strong>',
-        icon: 'warning',
-        html: '<div class="pt-2 text-left">' +
-            htmlItems +
-            '<div class="mt-3 p-3 bg-red-50 rounded-lg border border-red-200 flex justify-between items-center font-bold text-sm text-red-800">' +
-              '<span>Total Tagihan:</span>' +
-              '<span>' + formatRupiah(total) + '</span>' +
-            '</div>' +
-          '</div>',
-        showCloseButton: true,
-        confirmButtonText: '<i class="fa-brands fa-whatsapp mr-1"></i> Konfirmasi via Bendahara',
-        confirmButtonColor: '#059669'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          var pesanWA = "Halo Bendahara, saya dari Blok " + currentUser.no_rumah + " ingin mengonfirmasi pembayaran kas tunggakan sebesar " + formatRupiah(total);
-          window.open("https://wa.me/6281234567892?text=" + encodeURIComponent(pesanWA), "_blank");
-        }
-      });
-    }
-  </script>
-</body>
-</html>
   </script>
 </body>
 </html>
