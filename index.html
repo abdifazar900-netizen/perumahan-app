@@ -569,33 +569,33 @@
 
     // KONTAK PENGURUS
     function tampilkanKontakPengurus() {
-      var dataPengurus = [
-        { jabatan: "Ketua RT", nama: "Pak Hilman (Blok B35)", wa: "6281234567890" },
-        { jabatan: "Wakil RT", nama: "Pak Coba (Blok B34)", wa: "6281234567891" },
-        { jabatan: "Bendahara", nama: "Pak Suryaman (Blok B30)", wa: "6281234567892" },
-        { jabatan: "Ketua DKM", nama: "Pak Deden (Blok B30)", wa: "6281234567893" }
-      ];
+  var dataPengurus = [
+    { jabatan: "Ketua RT", nama: KONTAK_PENGURUS.ketua_rt.nama, wa: KONTAK_PENGURUS.ketua_rt.wa },
+    { jabatan: "Wakil RT", nama: KONTAK_PENGURUS.wakil_rt.nama, wa: KONTAK_PENGURUS.wakil_rt.wa },
+    { jabatan: "Bendahara", nama: KONTAK_PENGURUS.bendahara.nama, wa: KONTAK_PENGURUS.bendahara.wa },
+    { jabatan: "Ketua DKM", nama: KONTAK_PENGURUS.dkm.nama, wa: KONTAK_PENGURUS.dkm.wa }
+  ];
 
-      var htmlList = dataPengurus.map(function(p) {
-        return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2.5">' +
-          '<div class="text-left">' +
-            '<p class="font-bold text-gray-800 text-sm">' + p.jabatan + '</p>' +
-            '<p class="text-xs text-gray-500">' + p.nama + '</p>' +
-          '</div>' +
-          '<a href="https://wa.me/' + p.wa + '" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1">' +
-            '<i class="fa-brands fa-whatsapp text-sm"></i> WA' +
-          '</a>' +
-        '</div>';
-      }).join('');
+  var htmlList = dataPengurus.map(function(p) {
+    return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2.5">' +
+      '<div class="text-left">' +
+        '<p class="font-bold text-gray-800 text-sm">' + p.jabatan + '</p>' +
+        '<p class="text-xs text-gray-500">' + p.nama + '</p>' +
+      '</div>' +
+      '<a href="https://wa.me/' + p.wa + '" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1">' +
+        '<i class="fa-brands fa-whatsapp text-sm"></i> WA' +
+      '</a>' +
+    '</div>';
+  }).join('');
 
-      Swal.fire({
-        title: '<strong>Kontak Pengurus RT</strong>',
-        icon: 'info',
-        html: '<div class="pt-2">' + htmlList + '</div>',
-        showCloseButton: true,
-        showConfirmButton: false
-      });
-    }
+  Swal.fire({
+    title: '<strong>Kontak Pengurus RT</strong>',
+    icon: 'info',
+    html: '<div class="pt-2">' + htmlList + '</div>',
+    showCloseButton: true,
+    showConfirmButton: false
+  });
+}
 
     // KAS WARGA
     function loadDataKasWarga() {
@@ -678,11 +678,11 @@
         confirmButtonText: '<i class="fa-brands fa-whatsapp mr-1"></i> Konfirmasi via Bendahara',
         confirmButtonColor: '#059669'
       }).then((result) => {
-        if (result.isConfirmed) {
-          var pesanWA = "Halo Bendahara, saya dari Blok " + currentUser.no_rumah + " ingin mengonfirmasi pembayaran kas tunggakan sebesar " + formatRupiah(total);
-          window.open("https://wa.me/6281234567892?text=" + encodeURIComponent(pesanWA), "_blank");
-        }
-      });
+  if (result.isConfirmed) {
+    var pesanWA = "Halo " + KONTAK_PENGURUS.bendahara.nama + ", saya dari Blok " + currentUser.no_rumah + " ingin mengonfirmasi pembayaran kas tunggakan sebesar " + formatRupiah(total);
+    window.open("https://wa.me/" + KONTAK_PENGURUS.bendahara.wa + "?text=" + encodeURIComponent(pesanWA), "_blank");
+  }
+});
     }
 
     // NAVIGATION & MODAL HELPERS
