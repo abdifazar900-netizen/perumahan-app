@@ -648,49 +648,95 @@ function loadPengumuman() {
   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 }
 
-function loadDataKasWarga() {
-  if (!currentUser || !currentUser.no_rumah) return;
+// Global Variabel Simpan Data Kas User
+    var dataKasUser = [];
 
-  fetch(API_URL + "?action=getKasWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
-    .then(res => res.json())
-    .then(res => {
-      if (res.status === 'success') {
-        var listKas = res.data;
-        var tunggakan = listKas.filter(k => k.status === 'Belum Bayar');
-        var totalTunggakan = 0;
-        
-        tunggakan.forEach(k => totalTunggakan += Number(k.nominal));
+    // Fungsi Load Data Kas Sesuai Rumah User Login
+    function loadDataKasWarga() {
+      if (!currentUser || !currentUser.no_rumah) return;
 
-        var cardKasContainer = document.getElementById("status-kas-container");
-        if (!cardKasContainer) return;
+      fetch(API_URL + "?action=getKasWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success') {
+            dataKasUser = res.data; // Simpan ke variabel global
+            var tunggakan = dataKasUser.filter(k => k.status === 'Belum Bayar');
+            var totalTunggakan = 0;
+            
+            tunggakan.forEach(k => totalTunggakan += Number(k.nominal));
 
-        if (tunggakan.length > 0) {
-          cardKasContainer.innerHTML = 
-            '<div>' +
-              '<p class="text-xs text-gray-500 font-semibold">Tunggakan Kas (' + tunggakan.length + ' Bulan)</p>' +
-              '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold">' +
-                '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ' + formatRupiah(totalTunggakan) +
-              '</span>' +
-            '</div>' +
-            '<button onclick="bukaModalRincianKas()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
-              'Bayar Kas' +
-            '</button>';
-        } else {
-          cardKasContainer.innerHTML = 
-            '<div>' +
-              '<p class="text-xs text-gray-500 font-semibold">Status Iuran Bulan Ini</p>' +
-              '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">' +
-                '<i class="fa-solid fa-circle-check mr-1"></i> Lunas' +
-              '</span>' +
-            '</div>' +
-            '<button onclick="showToast(\'info\', \'Iuran Kas Anda Sudah Lunas\')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
-              'Bayar Kas' +
-            '</button>';
-        }
+            var cardKasContainer = document.getElementById("status-kas-container");
+            if (!cardKasContainer) return;
+
+            if (tunggakan.length > 0) {
+              cardKasContainer.innerHTML = 
+                '<div>' +
+                  '<p class="text-xs text-gray-500 font-semibold">Tunggakan Kas (' + tunggakan.length + ' Bulan)</p>' +
+                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold">' +
+                    '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ' + formatRupiah(totalTunggakan) +
+                  '</span>' +
+                '</div>' +
+                '<button onclick="bukaModalRincianKas()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
+                  'Bayar Kas' +
+                '</button>';
+            } else {
+              cardKasContainer.innerHTML = 
+                '<div>' +
+                  '<p class="text-xs text-gray-500 font-semibold">Status Iuran Bulan Ini</p>' +
+                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">' +
+                    '<i class="fa-solid fa-circle-check mr-1"></i> Lunas' +
+                  '</span>' +
+                '</div>' +
+                '<button onclick="showToast(\'info\', \'Iuran Kas Anda Sudah Lunas\')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
+                  'Bayar Kas' +
+                '</button>';
+            }
+          }
+        })
+        .catch(err => console.error(err));
+    }
+
+    // Fungsi Pop-up Rincian Tunggakan Kas & WA Konfirmasi
+    function bukaModalRincianKas() {
+      var tunggakan = dataKasUser.filter(k => k.status === 'Belum Bayar');
+      
+      if (tunggakan.length === 0) {
+        showToast('info', 'Tidak ada tunggakan kas');
+        return;
       }
-    })
-    .catch(err => console.error(err));
-}
+
+      var htmlItems = tunggakan.map(function(k) {
+        return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2 text-sm">' +
+          '<div class="text-left">' +
+            '<p class="font-bold text-gray-800">Iuran Bulan ' + k.bulan_tahun + '</p>' +
+            '<p class="text-xs text-red-600 font-semibold">Belum Dibayar</p>' +
+          '</div>' +
+          '<span class="font-bold text-gray-700">' + formatRupiah(k.nominal) + '</span>' +
+        '</div>';
+      }).join('');
+
+      var total = tunggakan.reduce((sum, item) => sum + Number(item.nominal), 0);
+
+      Swal.fire({
+        title: '<strong>Rincian Tunggakan Kas</strong>',
+        icon: 'warning',
+        html: '<div class="pt-2 text-left">' +
+            htmlItems +
+            '<div class="mt-3 p-3 bg-red-50 rounded-lg border border-red-200 flex justify-between items-center font-bold text-sm text-red-800">' +
+              '<span>Total Tagihan:</span>' +
+              '<span>' + formatRupiah(total) + '</span>' +
+            '</div>' +
+          '</div>',
+        showCloseButton: true,
+        confirmButtonText: '<i class="fa-brands fa-whatsapp mr-1"></i> Konfirmasi via Bendahara',
+        confirmButtonColor: '#059669'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          var pesanWA = "Halo Bendahara, saya dari Blok " + currentUser.no_rumah + " ingin mengonfirmasi pembayaran kas tunggakan sebesar " + formatRupiah(total);
+          window.open("https://wa.me/6281234567892?text=" + encodeURIComponent(pesanWA), "_blank");
+        }
+      });
+    }
   </script>
 </body>
 </html>
