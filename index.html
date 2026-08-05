@@ -333,65 +333,74 @@
 
     // --- FUNCTION AMBIL PENGUMUMAN ---
     function loadPengumuman() {
-      fetch(API_URL + "?action=getPengumuman")
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === 'success') {
-            const containerHome = document.getElementById('list-pengumuman-home');
-            const containerFull = document.getElementById('list-pengumuman-full');
-            
-            if (containerHome) containerHome.innerHTML = '';
-            if (containerFull) containerFull.innerHTML = '';
+  fetch(API_URL + "?action=getPengumuman")
+    .then(res => {
+      // Cek apakah response berupa HTML (biasanya karena error 404/permission Google)
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") === -1) {
+        return res.text().then(text => {
+          throw new Error("Server mengembalikan HTML/Error bukan JSON. Cek izin deployment Apps Script (Harus 'Anyone').");
+        });
+      }
+      return res.json();
+    })
+    .then(res => {
+      if (res.status === 'success') {
+        const containerHome = document.getElementById('list-pengumuman-home');
+        const containerFull = document.getElementById('list-pengumuman-full');
+        
+        if (containerHome) containerHome.innerHTML = '';
+        if (containerFull) containerFull.innerHTML = '';
 
-            if (res.data.length === 0) {
-              const emptyMsg = `<p class="text-xs text-gray-400 italic text-center py-4">Belum ada pengumuman.</p>`;
-              if (containerHome) containerHome.innerHTML = emptyMsg;
-              if (containerFull) containerFull.innerHTML = emptyMsg;
-              return;
-            }
+        if (!res.data || res.data.length === 0) {
+          const emptyMsg = `<p class="text-xs text-gray-400 italic text-center py-4">Belum ada pengumuman.</p>`;
+          if (containerHome) containerHome.innerHTML = emptyMsg;
+          if (containerFull) containerFull.innerHTML = emptyMsg;
+          return;
+        }
 
-            res.data.forEach((item, index) => {
-              // Cek tombol aksi Edit/Hapus khusus Role Admin/RT
-              let actionButtons = '';
-              if (currentUser && currentUser.role && ['admin', 'rt'].includes(currentUser.role.toLowerCase())) {
-                actionButtons = `
-                  <div class="flex gap-3 mt-3 pt-2 border-t border-gray-100 text-xs">
-                    <button onclick="openModalEdit('${item.id_info}', \`${item.judul}\`, \`${item.isi}\`, '${item.kategori}')" class="text-blue-600 font-semibold hover:underline flex items-center gap-1">
-                      ✏️ Edit
-                    </button>
-                    <button onclick="hapusPengumuman('${item.id_info}')" class="text-red-600 font-semibold hover:underline flex items-center gap-1">
-                      🗑️ Hapus
-                    </button>
-                  </div>
-                `;
-              }
-
-              const cardHtml = `
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-3">
-                  <div class="flex justify-between items-center mb-1">
-                    <span class="text-xs bg-emerald-100 text-emerald-700 font-medium px-2 py-0.5 rounded-full">${item.kategori}</span>
-                    <span class="text-xs text-gray-400">${item.tanggal}</span>
-                  </div>
-                  <h3 class="font-bold text-gray-800 text-sm mt-1">${item.judul}</h3>
-                  <p class="text-xs text-gray-600 mt-1">${item.isi}</p>
-                  ${actionButtons}
-                </div>
-              `;
-
-              // Tampilkan 2 pengumuman teratas di Home
-              if (index < 2 && containerHome) {
-                containerHome.innerHTML += cardHtml;
-              }
-              // Tampilkan seluruh pengumuman di Tab Info
-              if (containerFull) {
-                containerFull.innerHTML += cardHtml;
-              }
-            });
+        res.data.forEach((item, index) => {
+          let actionButtons = '';
+          if (currentUser && currentUser.role && ['admin', 'rt'].includes(currentUser.role.toLowerCase())) {
+            actionButtons = `
+              <div class="flex gap-3 mt-3 pt-2 border-t border-gray-100 text-xs">
+                <button onclick="openModalEdit('${item.id_info}', \`${item.judul}\`, \`${item.isi}\`, '${item.kategori}')" class="text-blue-600 font-semibold hover:underline flex items-center gap-1">
+                  ✏️ Edit
+                </button>
+                <button onclick="hapusPengumuman('${item.id_info}')" class="text-red-600 font-semibold hover:underline flex items-center gap-1">
+                  🗑️ Hapus
+                </button>
+              </div>
+            `;
           }
-        })
-        .catch(err => console.error(err));
-    }
 
+          const cardHtml = `
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-3">
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-xs bg-emerald-100 text-emerald-700 font-medium px-2 py-0.5 rounded-full">${item.kategori}</span>
+                <span class="text-xs text-gray-400">${item.tanggal}</span>
+              </div>
+              <h3 class="font-bold text-gray-800 text-sm mt-1">${item.judul}</h3>
+              <p class="text-xs text-gray-600 mt-1">${item.isi}</p>
+              ${actionButtons}
+            </div>
+          `;
+
+          if (index < 2 && containerHome) containerHome.innerHTML += cardHtml;
+          if (containerFull) containerFull.innerHTML += cardHtml;
+        });
+      } else {
+        console.error("Gagal memuat data:", res.message);
+      }
+    })
+    .catch(err => {
+      console.error("Error Load Pengumuman:", err);
+      const containerHome = document.getElementById('list-pengumuman-home');
+      if (containerHome) {
+        containerHome.innerHTML = `<p class="text-xs text-red-500 italic text-center py-4">Gagal memuat pengumuman. Periksa koneksi API.</p>`;
+      }
+    });
+}
     // --- FUNCTION KIRIM LAPORAN ---
     function kirimLaporan() {
       const judul = document.getElementById("lap-judul").value;
