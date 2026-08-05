@@ -103,7 +103,7 @@
 
      <!-- GRID MENU UTAMA (DENGAN PANIC BUTTON) -->
       <div class="p-5 grid grid-cols-3 gap-3 text-center">
-        <!-- TOMBOL PANIC BUTTON (MENCOLOK DENGAN ANIMASI PULSE) -->
+        <!-- TOMBOL PANIC BUTTON -->
         <button onclick="tekanPanicButton()" class="col-span-3 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white p-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2 font-bold transition transform active:scale-95">
           <i class="fa-solid fa-triangle-exclamation text-xl animate-pulse"></i>
           <span>🚨 TOMBOL DARURAT (PANIC)</span>
@@ -181,6 +181,19 @@
     </button>
   </div>
 
+  <!-- MODAL KONTAK PENGURUS (BARU DITAMBAHKAN) -->
+  <div id="modal-kontak" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-bold text-gray-800">Pengurus D'Mutiara</h3>
+        <button onclick="tutupModalKontak()" class="text-gray-400 hover:text-gray-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+      <div id="modal-kontak-body"></div>
+    </div>
+  </div>
+
   <!-- MODAL 1: TAMBAH PENGUMUMAN -->
   <div id="modal-pengumuman" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
@@ -255,9 +268,10 @@
 
   <!-- JAVASCRIPT & INTEGRASI BACKEND -->
   <script>
-   const API_URL = "https://script.google.com/macros/s/AKfycbxYwsbixp0Wvuily2-I48hQhXMdL42T4JkkSlB-qX5ySpsnHzGnxqDhOXwnsQdEVIgGnA/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxYwsbixp0Wvuily2-I48hQhXMdL42T4JkkSlB-qX5ySpsnHzGnxqDhOXwnsQdEVIgGnA/exec";
     let currentUser = null;
     let dataKasUser = [];
+
     // FUNGSI UTILITY SWEETALERT2
     function showLoading(pesan = "Memproses data...") {
       Swal.fire({
@@ -573,115 +587,120 @@
     }
 
     // KONTAK PENGURUS
-  // 1. Deklarasikan data pengurus terlebih dahulu
-const KONTAK_PENGURUS = {
-  ketua_rt: { nama: "Bpk. Asep", wa: "6281234567890" },
-  wakil_rt: { nama: "Bpk. Dedi", wa: "6289876543210" },
-  bendahara: { nama: "Bpk. Fazar", wa: "6287788052399" },
-  dkm: { nama: "Ust. Ahmad", wa: "6281111222233" }
-};
+    const KONTAK_PENGURUS = {
+      ketua_rt: { nama: "Bpk. Asep", wa: "6281234567890" },
+      wakil_rt: { nama: "Bpk. Dedi", wa: "6289876543210" },
+      bendahara: { nama: "Bpk. Fazar", wa: "6287788052399" },
+      dkm: { nama: "Ust. Ahmad", wa: "6281111222233" }
+    };
 
-// 2. Fungsi tampilkan kontak
-function tampilkanKontakPengurus() {
-  var dataPengurus = [
-    { jabatan: "Ketua RT", nama: KONTAK_PENGURUS.ketua_rt.nama, wa: KONTAK_PENGURUS.ketua_rt.wa },
-    { jabatan: "Wakil RT", nama: KONTAK_PENGURUS.wakil_rt.nama, wa: KONTAK_PENGURUS.wakil_rt.wa },
-    { jabatan: "Bendahara", nama: KONTAK_PENGURUS.bendahara.nama, wa: KONTAK_PENGURUS.bendahara.wa },
-    { jabatan: "Ketua DKM", nama: KONTAK_PENGURUS.dkm.nama, wa: KONTAK_PENGURUS.dkm.wa }
-  ];
+    function tampilkanKontakPengurus() {
+      var dataPengurus = [
+        { jabatan: "Ketua RT", nama: KONTAK_PENGURUS.ketua_rt.nama, wa: KONTAK_PENGURUS.ketua_rt.wa },
+        { jabatan: "Wakil RT", nama: KONTAK_PENGURUS.wakil_rt.nama, wa: KONTAK_PENGURUS.wakil_rt.wa },
+        { jabatan: "Bendahara", nama: KONTAK_PENGURUS.bendahara.nama, wa: KONTAK_PENGURUS.bendahara.wa },
+        { jabatan: "Ketua DKM", nama: KONTAK_PENGURUS.dkm.nama, wa: KONTAK_PENGURUS.dkm.wa }
+      ];
 
-  var html = '<div class="space-y-3 p-1">';
-  
-  dataPengurus.forEach(function(item) {
-    var noWa = String(item.wa || '').replace(/[^0-9]/g, '');
-    if (noWa.startsWith("0")) noWa = "62" + noWa.slice(1);
+      var html = '<div class="space-y-3 p-1">';
+      
+      dataPengurus.forEach(function(item) {
+        var noWa = String(item.wa || '').replace(/[^0-9]/g, '');
+        if (noWa.startsWith("0")) noWa = "62" + noWa.slice(1);
 
-    html += 
-      '<div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">' +
-        '<div>' +
-          '<p class="text-xs text-emerald-600 font-bold">' + item.jabatan + '</p>' +
-          '<p class="text-sm font-bold text-gray-800">' + (item.nama || '-') + '</p>' +
-        '</div>' +
-        '<a href="https://wa.me/' + noWa + '" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white p-2.5 rounded-lg flex items-center justify-center">' +
-          '<i class="fa-brands fa-whatsapp text-lg"></i>' +
-        '</a>' +
-      '</div>';
-  });
+        html += 
+          '<div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">' +
+            '<div>' +
+              '<p class="text-xs text-emerald-600 font-bold">' + item.jabatan + '</p>' +
+              '<p class="text-sm font-bold text-gray-800">' + (item.nama || '-') + '</p>' +
+            '</div>' +
+            '<a href="https://wa.me/' + noWa + '" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white p-2.5 rounded-lg flex items-center justify-center">' +
+              '<i class="fa-brands fa-whatsapp text-lg"></i>' +
+            '</a>' +
+          '</div>';
+      });
 
-  html += '</div>';
+      html += '</div>';
 
-  var container = document.getElementById("modal-kontak-body") || document.getElementById("kontak-pengurus-container");
-  if (container) {
-    container.innerHTML = html;
-  }
+      var container = document.getElementById("modal-kontak-body");
+      if (container) {
+        container.innerHTML = html;
+      }
 
-  // Panggil fungsi buka modal kontak Anda jika ada
-  if (typeof bukaModalKontak === 'function') {
-    bukaModalKontak();
-  }
-}
+      var modal = document.getElementById("modal-kontak");
+      if (modal) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      }
+    }
+
+    function tutupModalKontak() {
+      var modal = document.getElementById("modal-kontak");
+      if (modal) {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+    }
 
     // KAS WARGA
-   function loadDataKasWarga() {
-  if (!currentUser || !currentUser.no_rumah) return;
+    function loadDataKasWarga() {
+      if (!currentUser || !currentUser.no_rumah) return;
 
-  // Pastikan variabel URL mengarah ke variabel global API/SCRIPT URL yang aktif
-  var urlEndpoint = (typeof API_URL !== 'undefined' ? API_URL : SCRIPT_URL);
+      var urlEndpoint = (typeof API_URL !== 'undefined' ? API_URL : SCRIPT_URL);
 
-  fetch(urlEndpoint + "?action=getKasWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
-    .then(res => {
-      // Validasi apakah respons yang didapat adalah JSON/Valid
-      if (!res.ok) {
-        throw new Error("HTTP Status " + res.status + " (Cek URL Deployment)");
-      }
-      return res.json();
-    })
-    .then(res => {
-      if (res.status === 'success') {
-        dataKasUser = res.data || [];
-        var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
-        var totalTunggakan = 0;
-        
-        tunggakan.forEach(k => totalTunggakan += Number(k.nominal || 0));
+      fetch(urlEndpoint + "?action=getKasWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
+        .then(res => {
+          if (!res.ok) {
+            throw new Error("HTTP Status " + res.status + " (Cek URL Deployment)");
+          }
+          return res.json();
+        })
+        .then(res => {
+          if (res.status === 'success') {
+            dataKasUser = res.data || [];
+            var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
+            var totalTunggakan = 0;
+            
+            tunggakan.forEach(k => totalTunggakan += Number(k.nominal || 0));
 
-        var cardKasContainer = document.getElementById("status-kas-container");
-        if (!cardKasContainer) return;
+            var cardKasContainer = document.getElementById("status-kas-container");
+            if (!cardKasContainer) return;
 
-        if (tunggakan.length > 0) {
-          cardKasContainer.innerHTML = 
-            '<div>' +
-              '<p class="text-xs text-gray-500 font-semibold">Tunggakan Kas (' + tunggakan.length + ' Bulan)</p>' +
-              '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold">' +
-                '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ' + formatRupiah(totalTunggakan) +
-              '</span>' +
-            '</div>' +
-            '<button onclick="bukaModalRincianKas()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
-              'Bayar Kas' +
-            '</button>';
-        } else {
-          cardKasContainer.innerHTML = 
-            '<div>' +
-              '<p class="text-xs text-gray-500 font-semibold">Status Iuran Bulan Ini</p>' +
-              '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">' +
-                '<i class="fa-solid fa-circle-check mr-1"></i> Lunas' +
-              '</span>' +
-            '</div>' +
-            '<button onclick="showToast(\'info\', \'Iuran Kas Anda Sudah Lunas\')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
-              'Bayar Kas' +
-            '</button>';
-        }
-      } else {
-        console.warn("Respon Kas Gagal:", res.message);
-      }
-    })
-    .catch(err => {
-      console.error("Error load kas:", err);
-      var cardKasContainer = document.getElementById("status-kas-container");
-      if (cardKasContainer) {
-        cardKasContainer.innerHTML = '<p class="text-xs text-red-500 font-semibold">Gagal memuat data kas</p>';
-      }
-    });
-}
+            if (tunggakan.length > 0) {
+              cardKasContainer.innerHTML = 
+                '<div>' +
+                  '<p class="text-xs text-gray-500 font-semibold">Tunggakan Kas (' + tunggakan.length + ' Bulan)</p>' +
+                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold">' +
+                    '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ' + formatRupiah(totalTunggakan) +
+                  '</span>' +
+                '</div>' +
+                '<button onclick="bukaModalRincianKas()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
+                  'Bayar Kas' +
+                '</button>';
+            } else {
+              cardKasContainer.innerHTML = 
+                '<div>' +
+                  '<p class="text-xs text-gray-500 font-semibold">Status Iuran Bulan Ini</p>' +
+                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">' +
+                    '<i class="fa-solid fa-circle-check mr-1"></i> Lunas' +
+                  '</span>' +
+                '</div>' +
+                '<button onclick="showToast(\'info\', \'Iuran Kas Anda Sudah Lunas\')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
+                  'Bayar Kas' +
+                '</button>';
+            }
+          } else {
+            console.warn("Respon Kas Gagal:", res.message);
+          }
+        })
+        .catch(err => {
+          console.error("Error load kas:", err);
+          var cardKasContainer = document.getElementById("status-kas-container");
+          if (cardKasContainer) {
+            cardKasContainer.innerHTML = '<p class="text-xs text-red-500 font-semibold">Gagal memuat data kas</p>';
+          }
+        });
+    }
 
     function bukaModalRincianKas() {
       var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
@@ -719,11 +738,11 @@ function tampilkanKontakPengurus() {
         confirmButtonText: '<i class="fa-brands fa-whatsapp mr-1"></i> Konfirmasi via Bendahara',
         confirmButtonColor: '#059669'
       }).then((result) => {
-  if (result.isConfirmed) {
-    var pesanWA = "Halo " + KONTAK_PENGURUS.bendahara.nama + ", saya dari Blok " + currentUser.no_rumah + " ingin mengonfirmasi pembayaran kas tunggakan sebesar " + formatRupiah(total);
-    window.open("https://wa.me/" + KONTAK_PENGURUS.bendahara.wa + "?text=" + encodeURIComponent(pesanWA), "_blank");
-  }
-});
+        if (result.isConfirmed) {
+          var pesanWA = "Halo " + KONTAK_PENGURUS.bendahara.nama + ", saya dari Blok " + currentUser.no_rumah + " ingin mengonfirmasi pembayaran kas tunggakan sebesar " + formatRupiah(total);
+          window.open("https://wa.me/" + KONTAK_PENGURUS.bendahara.wa + "?text=" + encodeURIComponent(pesanWA), "_blank");
+        }
+      });
     }
 
     // NAVIGATION & MODAL HELPERS
@@ -775,6 +794,7 @@ function tampilkanKontakPengurus() {
       document.getElementById("adm-judul").value = "";
       document.getElementById("adm-isi").value = "";
     }
+
     // FUNGSI TEKAN PANIC BUTTON
     function tekanPanicButton() {
       Swal.fire({
