@@ -2,17 +2,14 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <!-- Kunci scaling agar tidak bisa di-zoom cubit ala web -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   
   <title>Aplikasi Perumahan</title>
 
-  <!-- Kunci Mode Native PWA / Android WebView -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   
-  <!-- Warnai Status Bar HP disamakan dengan Warna Utama Aplikasi (#059669 = Hijau Emerald) -->
   <meta name="theme-color" content="#059669">
   <meta name="msapplication-navbutton-color" content="#059669">
 
@@ -20,24 +17,23 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- SweetAlert2 CSS & JS -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
-    /* Styling agar responsif mirip aplikasi HP Native */
     body { 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
     }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* --- SENTUHAN FULL NATIVE FEEL --- */
     * {
-      -webkit-touch-callout: none; /* Matikan pop-up tekan lama */
-      -webkit-user-select: none;   /* Matikan blok teks */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
       user-select: none;
-      -webkit-tap-highlight-color: transparent; /* Hilangkan kotak biru pas tombol diklik */
+      -webkit-tap-highlight-color: transparent;
     }
 
-    /* Khusus untuk kolom input teks agar warga tetap bisa mengetik normal */
     input, textarea, select {
       -webkit-user-select: auto !important;
       user-select: auto !important;
@@ -53,12 +49,9 @@
 </head>
 <body class="bg-gray-100 min-h-screen text-gray-800 flex justify-center">
 
-  <!-- Main Container (Dipatok ukuran HP max-w-md) -->
   <div class="w-full max-w-md bg-white min-h-screen shadow-lg flex flex-col relative pb-20">
 
-    <!-- ========================================== -->
     <!-- 1. HALAMAN LOGIN -->
-    <!-- ========================================== -->
     <div id="page-login" class="p-6 flex flex-col justify-center min-h-screen bg-emerald-600 text-white">
       <div class="text-center mb-8">
         <div class="bg-white text-emerald-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl shadow-lg">
@@ -87,11 +80,8 @@
       </div>
     </div>
 
-    <!-- ========================================== -->
     <!-- 2. DASHBOARD / BERANDA WARGA -->
-    <!-- ========================================== -->
     <div id="page-dashboard" class="hidden flex-col">
-      <!-- Header Bar -->
       <div class="bg-emerald-600 text-white p-5 rounded-b-2xl shadow">
         <div class="flex justify-between items-center mb-4">
           <div>
@@ -104,7 +94,6 @@
           </button>
         </div>
 
-        <!-- Banner Info Kas -->
         <div class="bg-white text-gray-800 p-4 rounded-xl shadow-md flex justify-between items-center">
           <div>
             <p class="text-xs text-gray-500 font-semibold">Status Iuran Bulan Ini</p>
@@ -112,19 +101,18 @@
               <i class="fa-solid fa-circle-check mr-1"></i> Lunas
             </span>
           </div>
-          <button onclick="alert('Fitur Bayar Iuran via Midtrans/Transfer Kas')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">
+          <button onclick="showToast('info', 'Fitur Bayar Iuran Segera Hadir')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">
             Bayar Kas
           </button>
         </div>
       </div>
 
-      <!-- Quick Action Buttons -->
       <div class="p-5 grid grid-cols-3 gap-3 text-center">
         <button onclick="pindahTab('laporan')" class="bg-red-50 p-3 rounded-xl border border-red-100 text-red-600 flex flex-col items-center">
           <i class="fa-solid fa-triangle-exclamation text-xl mb-1"></i>
           <span class="text-xs font-semibold">Lapor Masalah</span>
         </button>
-        <button onclick="alert('Kontak Satpam: 0812-9999-8888')" class="bg-amber-50 p-3 rounded-xl border border-amber-100 text-amber-600 flex flex-col items-center">
+        <button onclick="Swal.fire('Pos Satpam', 'Kontak Satpam: 0812-9999-8888', 'info')" class="bg-amber-50 p-3 rounded-xl border border-amber-100 text-amber-600 flex flex-col items-center">
           <i class="fa-solid fa-shield-halved text-xl mb-1"></i>
           <span class="text-xs font-semibold">Pos Satpam</span>
         </button>
@@ -134,32 +122,24 @@
         </button>
       </div>
 
-      <!-- Section Pengumuman Terbaru -->
       <div class="px-5">
         <div class="flex justify-between items-center mb-3">
           <h3 class="font-bold text-gray-700 text-sm">Pengumuman Terkini</h3>
           <button onclick="pindahTab('pengumuman')" class="text-xs text-emerald-600 font-semibold">Lihat Semua</button>
         </div>
         <div id="list-pengumuman-home" class="space-y-3">
-          <!-- Data pengumuman dari API dimasukkan lewat JS -->
           <p class="text-xs text-gray-400 italic text-center py-4">Memuat pengumuman...</p>
         </div>
       </div>
     </div>
 
-    <!-- ========================================== -->
     <!-- 3. TAB PENGUMUMAN -->
-    <!-- ========================================== -->
     <div id="page-pengumuman" class="hidden p-5">
       <h2 class="font-bold text-lg mb-4 text-gray-800">Daftar Pengumuman</h2>
-      <div id="list-pengumuman-full" class="space-y-3">
-        <!-- Full list pengumuman -->
-      </div>
+      <div id="list-pengumuman-full" class="space-y-3"></div>
     </div>
 
-    <!-- ========================================== -->
     <!-- 4. TAB LAPORAN / ADUAN -->
-    <!-- ========================================== -->
     <div id="page-laporan" class="hidden p-5">
       <h2 class="font-bold text-lg mb-4 text-gray-800">Buat Laporan Aduan</h2>
       
@@ -178,9 +158,7 @@
       </div>
     </div>
 
-    <!-- ========================================== -->
     <!-- BOTTOM NAVIGATION BAR -->
-    <!-- ========================================== -->
     <div id="bottom-nav" class="hidden fixed bottom-0 max-w-md w-full bg-white border-t flex justify-around py-2.5 text-gray-400 text-center text-xs z-40">
       <button onclick="pindahTab('dashboard')" id="nav-dashboard" class="text-emerald-600 font-bold">
         <i class="fa-solid fa-house text-lg block"></i> Home
@@ -274,27 +252,51 @@
     </div>
   </div>
 
-  <!-- ========================================== -->
-  <!-- JAVASCRIPT & INTEGRASI BACKEND (GAS) -->
-  <!-- ========================================== -->
+  <!-- JAVASCRIPT & INTEGRASI BACKEND -->
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxYwsbixp0Wvuily2-I48hQhXMdL42T4JkkSlB-qX5ySpsnHzGnxqDhOXwnsQdEVIgGnA/exec";
+    // PASTI-KAN URL DEPLOYMENT ANDA SESUAI DI SINI
+    const API_URL = "https://script.google.com/macros/s/AKfycbxMLU8Z6HSgwX_cruYO_2QF4_TjhkaWvNbujYDiXYqj9t2hJEANFlal30_JeXW2v8xT/exec";
 
     let currentUser = null;
 
-    // --- FUNCTION LOGIN ---
+    // FUNGSI UTILITY SWEETALERT2
+    function showLoading(pesan = "Memproses data...") {
+      Swal.fire({
+        title: pesan,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+    }
+
+    function showToast(icon, message) {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true
+      });
+
+      Toast.fire({
+        icon: icon,
+        title: message
+      });
+    }
+
+    // LOGIN
     function prosesLogin() {
       const nohp = document.getElementById("login-nohp").value;
       const pass = document.getElementById("login-password").value;
-      const btn = document.getElementById("btn-login");
 
       if (!nohp || !pass) {
-        alert("Mohon isi Nomor HP dan Password!");
+        showToast('warning', 'Isi Nomor HP dan Password!');
         return;
       }
 
-      btn.innerText = "Memproses...";
-      btn.disabled = true;
+      showLoading("Sedang Masuk...");
 
       fetch(API_URL, {
         method: "POST",
@@ -303,117 +305,226 @@
       })
       .then(res => res.json())
       .then(data => {
-        btn.innerText = "MASUK";
-        btn.disabled = false;
-
+        Swal.close();
         if (data.status === "success") {
           currentUser = data.user;
           document.getElementById("user-nama").innerText = currentUser.nama;
           document.getElementById("user-norumah").innerText = "Blok " + currentUser.no_rumah;
           
-          // Sembunyikan Login, Tampilkan Dashboard & Bottom Nav
           document.getElementById("page-login").classList.add("hidden");
           document.getElementById("page-dashboard").classList.remove("hidden");
           document.getElementById("page-dashboard").classList.add("flex");
           document.getElementById("bottom-nav").classList.remove("hidden");
 
-          // Saklar Tombol Plus & Load Data
           checkAdminRole();
           loadPengumuman();
+          showToast('success', 'Selamat Datang, ' + currentUser.nama);
         } else {
-          alert(data.message);
+          showToast('error', data.message);
         }
       })
       .catch(err => {
-        btn.innerText = "MASUK";
-        btn.disabled = false;
-        alert("Gagal terhubung ke server: " + err);
+        Swal.close();
+        showToast('error', 'Gagal terhubung ke server');
       });
     }
 
-    // --- FUNCTION AMBIL PENGUMUMAN ---
+    // LOAD PENGUMUMAN
     function loadPengumuman() {
-  fetch(API_URL + "?action=getPengumuman")
-    .then(res => {
-      // Cek apakah response berupa HTML (biasanya karena error 404/permission Google)
-      const contentType = res.headers.get("content-type");
-      if (contentType && contentType.indexOf("application/json") === -1) {
-        return res.text().then(text => {
-          throw new Error("Server mengembalikan HTML/Error bukan JSON. Cek izin deployment Apps Script (Harus 'Anyone').");
-        });
-      }
-      return res.json();
-    })
-    .then(res => {
-      if (res.status === 'success') {
-        const containerHome = document.getElementById('list-pengumuman-home');
-        const containerFull = document.getElementById('list-pengumuman-full');
-        
-        if (containerHome) containerHome.innerHTML = '';
-        if (containerFull) containerFull.innerHTML = '';
+      fetch(API_URL + "?action=getPengumuman")
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success') {
+            const containerHome = document.getElementById('list-pengumuman-home');
+            const containerFull = document.getElementById('list-pengumuman-full');
+            
+            if (containerHome) containerHome.innerHTML = '';
+            if (containerFull) containerFull.innerHTML = '';
 
-        if (!res.data || res.data.length === 0) {
-          const emptyMsg = `<p class="text-xs text-gray-400 italic text-center py-4">Belum ada pengumuman.</p>`;
-          if (containerHome) containerHome.innerHTML = emptyMsg;
-          if (containerFull) containerFull.innerHTML = emptyMsg;
-          return;
-        }
+            if (!res.data || res.data.length === 0) {
+              const emptyMsg = `<p class="text-xs text-gray-400 italic text-center py-4">Belum ada pengumuman.</p>`;
+              if (containerHome) containerHome.innerHTML = emptyMsg;
+              if (containerFull) containerFull.innerHTML = emptyMsg;
+              return;
+            }
 
-        res.data.forEach((item, index) => {
-          let actionButtons = '';
-          if (currentUser && currentUser.role && ['admin', 'rt'].includes(currentUser.role.toLowerCase())) {
-            actionButtons = `
-              <div class="flex gap-3 mt-3 pt-2 border-t border-gray-100 text-xs">
-                <button onclick="openModalEdit('${item.id_info}', \`${item.judul}\`, \`${item.isi}\`, '${item.kategori}')" class="text-blue-600 font-semibold hover:underline flex items-center gap-1">
-                  ✏️ Edit
-                </button>
-                <button onclick="hapusPengumuman('${item.id_info}')" class="text-red-600 font-semibold hover:underline flex items-center gap-1">
-                  🗑️ Hapus
-                </button>
-              </div>
-            `;
+            res.data.forEach((item, index) => {
+              let actionButtons = '';
+              if (currentUser && currentUser.role && ['admin', 'rt'].includes(currentUser.role.toLowerCase())) {
+                actionButtons = `
+                  <div class="flex gap-3 mt-3 pt-2 border-t border-gray-100 text-xs">
+                    <button onclick="openModalEdit('${item.id_info}', \`${item.judul}\`, \`${item.isi}\`, '${item.kategori}')" class="text-blue-600 font-semibold hover:underline flex items-center gap-1">
+                      ✏️ Edit
+                    </button>
+                    <button onclick="hapusPengumuman('${item.id_info}')" class="text-red-600 font-semibold hover:underline flex items-center gap-1">
+                      🗑️ Hapus
+                    </button>
+                  </div>
+                `;
+              }
+
+              const cardHtml = `
+                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-3">
+                  <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs bg-emerald-100 text-emerald-700 font-medium px-2 py-0.5 rounded-full">${item.kategori}</span>
+                    <span class="text-xs text-gray-400">${item.tanggal}</span>
+                  </div>
+                  <h3 class="font-bold text-gray-800 text-sm mt-1">${item.judul}</h3>
+                  <p class="text-xs text-gray-600 mt-1">${item.isi}</p>
+                  ${actionButtons}
+                </div>
+              `;
+
+              if (index < 2 && containerHome) containerHome.innerHTML += cardHtml;
+              if (containerFull) containerFull.innerHTML += cardHtml;
+            });
           }
+        })
+        .catch(err => console.error(err));
+    }
 
-          const cardHtml = `
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-3">
-              <div class="flex justify-between items-center mb-1">
-                <span class="text-xs bg-emerald-100 text-emerald-700 font-medium px-2 py-0.5 rounded-full">${item.kategori}</span>
-                <span class="text-xs text-gray-400">${item.tanggal}</span>
-              </div>
-              <h3 class="font-bold text-gray-800 text-sm mt-1">${item.judul}</h3>
-              <p class="text-xs text-gray-600 mt-1">${item.isi}</p>
-              ${actionButtons}
-            </div>
-          `;
+    // TAMBAH PENGUMUMAN
+    function simpanPengumumanAdmin() {
+      const kategori = document.getElementById("adm-kategori").value;
+      const judul = document.getElementById("adm-judul").value;
+      const isi = document.getElementById("adm-isi").value;
 
-          if (index < 2 && containerHome) containerHome.innerHTML += cardHtml;
-          if (containerFull) containerFull.innerHTML += cardHtml;
-        });
-      } else {
-        console.error("Gagal memuat data:", res.message);
-      }
-    })
-    .catch(err => {
-      console.error("Error Load Pengumuman:", err);
-      const containerHome = document.getElementById('list-pengumuman-home');
-      if (containerHome) {
-        containerHome.innerHTML = `<p class="text-xs text-red-500 italic text-center py-4">Gagal memuat pengumuman. Periksa koneksi API.</p>`;
-      }
-    });
-}
-    // --- FUNCTION KIRIM LAPORAN ---
-    function kirimLaporan() {
-      const judul = document.getElementById("lap-judul").value;
-      const deskripsi = document.getElementById("lap-deskripsi").value;
-      const btn = document.getElementById("btn-kirim-laporan");
-
-      if (!judul || !deskripsi) {
-        alert("Mohon lengkapi judul dan deskripsi laporan!");
+      if (!judul || !isi) {
+        showToast('warning', 'Lengkapi Judul dan Isi!');
         return;
       }
 
-      btn.innerText = "Mengirim...";
-      btn.disabled = true;
+      showLoading("Menerbitkan pengumuman...");
+
+      fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "tambahPengumuman",
+          kategori: kategori,
+          judul: judul,
+          isi: isi
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        Swal.close();
+        if (data.status === 'success') {
+          showToast('success', data.message);
+          tutupModalPengumuman();
+          loadPengumuman();
+        } else {
+          showToast('error', data.message);
+        }
+      })
+      .catch(err => {
+        Swal.close();
+        showToast('error', 'Gagal menerbitkan pengumuman');
+      });
+    }
+
+    // EDIT PENGUMUMAN
+    function openModalEdit(idInfo, judul, isi, kategori) {
+      document.getElementById("edit-id-info").value = idInfo;
+      document.getElementById("edit-judul").value = judul;
+      document.getElementById("edit-isi").value = isi;
+      document.getElementById("edit-kategori").value = kategori;
+      document.getElementById("modal-edit-pengumuman").classList.remove("hidden");
+    }
+
+    function tutupModalEdit() {
+      document.getElementById("modal-edit-pengumuman").classList.add("hidden");
+    }
+
+    function prosesSimpanEdit() {
+      const idInfo = document.getElementById("edit-id-info").value;
+      const judul = document.getElementById("edit-judul").value;
+      const isi = document.getElementById("edit-isi").value;
+      const kategori = document.getElementById("edit-kategori").value;
+
+      showLoading("Menyimpan perubahan...");
+
+      fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+          action: 'editPengumuman',
+          id_info: idInfo,
+          judul: judul,
+          isi: isi,
+          kategori: kategori
+        })
+      })
+      .then(res => res.json())
+      .then(res => {
+        Swal.close();
+        if (res.status === 'success') {
+          showToast('success', res.message);
+          tutupModalEdit();
+          loadPengumuman();
+        } else {
+          showToast('error', res.message);
+        }
+      })
+      .catch(err => {
+        Swal.close();
+        showToast('error', 'Error: ' + err.message);
+      });
+    }
+
+    // HAPUS PENGUMUMAN
+    function hapusPengumuman(idInfo) {
+      Swal.fire({
+        title: 'Hapus Pengumuman?',
+        text: "Pengumuman yang dihapus tidak bisa dikembalikan!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Ya, Hapus!',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          showLoading("Menghapus pengumuman...");
+
+          fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'hapusPengumuman',
+              id_info: idInfo
+            })
+          })
+          .then(res => res.json())
+          .then(res => {
+            Swal.close();
+            if (res.status === 'success') {
+              showToast('success', res.message);
+              loadPengumuman();
+            } else {
+              showToast('error', res.message);
+            }
+          })
+          .catch(err => {
+            Swal.close();
+            showToast('error', 'Gagal menghapus data');
+          });
+        }
+      });
+    }
+
+    // LAPORAN
+    function kirimLaporan() {
+      const judul = document.getElementById("lap-judul").value;
+      const deskripsi = document.getElementById("lap-deskripsi").value;
+
+      if (!judul || !deskripsi) {
+        showToast('warning', 'Lengkapi judul dan deskripsi!');
+        return;
+      }
+
+      showLoading("Mengirim laporan...");
 
       fetch(API_URL, {
         method: "POST",
@@ -428,17 +539,15 @@
       })
       .then(res => res.json())
       .then(data => {
-        btn.innerText = "KIRIM LAPORAN";
-        btn.disabled = false;
-        alert(data.message);
-        
+        Swal.close();
+        showToast('success', data.message);
         document.getElementById("lap-judul").value = "";
         document.getElementById("lap-deskripsi").value = "";
         pindahTab('dashboard');
       });
     }
 
-    // --- NAVIGATION TAB SWITCHER ---
+    // NAVIGATION & MODAL HELPERS
     function pindahTab(tabName) {
       document.getElementById("page-dashboard").classList.add("hidden");
       document.getElementById("page-dashboard").classList.remove("flex");
@@ -460,7 +569,6 @@
       }
     }
 
-    // --- LOGOUT ---
     function logout() {
       currentUser = null;
       document.getElementById("page-dashboard").classList.add("hidden");
@@ -468,9 +576,9 @@
       document.getElementById("bottom-nav").classList.add("hidden");
       document.getElementById("admin-action-btn").classList.add("hidden");
       document.getElementById("page-login").classList.remove("hidden");
+      showToast('info', 'Anda telah keluar');
     }
 
-    // Cek Role Admin / RT
     function checkAdminRole() {
       if (currentUser && currentUser.role && ['admin', 'rt'].includes(currentUser.role.toLowerCase())) {
         document.getElementById("admin-action-btn").classList.remove("hidden");
@@ -479,7 +587,6 @@
       }
     }
 
-    // MODAL TAMBAH
     function bukaModalPengumuman() {
       document.getElementById("modal-pengumuman").classList.remove("hidden");
     }
@@ -488,122 +595,6 @@
       document.getElementById("modal-pengumuman").classList.add("hidden");
       document.getElementById("adm-judul").value = "";
       document.getElementById("adm-isi").value = "";
-    }
-
-    function simpanPengumumanAdmin() {
-      const kategori = document.getElementById("adm-kategori").value;
-      const judul = document.getElementById("adm-judul").value;
-      const isi = document.getElementById("adm-isi").value;
-      const btn = document.getElementById("btn-simpan-pengumuman");
-
-      if (!judul || !isi) {
-        alert("Mohon lengkapi Judul dan Isi Pengumuman!");
-        return;
-      }
-
-      btn.innerText = "Menerbitkan...";
-      btn.disabled = true;
-
-      fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          action: "tambahPengumuman",
-          kategori: kategori,
-          judul: judul,
-          isi: isi
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        btn.innerText = "Terbitkan";
-        btn.disabled = false;
-        alert(data.message);
-        tutupModalPengumuman();
-        loadPengumuman();
-      })
-      .catch(err => {
-        btn.innerText = "Terbitkan";
-        btn.disabled = false;
-        alert("Gagal menerbitkan pengumuman: " + err);
-      });
-    }
-
-    // MODAL EDIT & FUNGSI AKSI
-    function openModalEdit(idInfo, judul, isi, kategori) {
-      document.getElementById("edit-id-info").value = idInfo;
-      document.getElementById("edit-judul").value = judul;
-      document.getElementById("edit-isi").value = isi;
-      document.getElementById("edit-kategori").value = kategori;
-      document.getElementById("modal-edit-pengumuman").classList.remove("hidden");
-    }
-
-    function tutupModalEdit() {
-      document.getElementById("modal-edit-pengumuman").classList.add("hidden");
-    }
-
-    function prosesSimpanEdit() {
-      const idInfo = document.getElementById("edit-id-info").value;
-      const judul = document.getElementById("edit-judul").value;
-      const isi = document.getElementById("edit-isi").value;
-      const kategori = document.getElementById("edit-kategori").value;
-      const btn = document.getElementById("btn-simpan-edit");
-
-      btn.innerText = "Menyimpan...";
-      btn.disabled = true;
-
-      fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'editPengumuman',
-          id_info: idInfo,
-          judul: judul,
-          isi: isi,
-          kategori: kategori
-        })
-      })
-      .then(res => res.json())
-      .then(res => {
-        btn.innerText = "Simpan";
-        btn.disabled = false;
-        if (res.status === 'success') {
-          alert(res.message);
-          tutupModalEdit();
-          loadPengumuman();
-        } else {
-          alert("Gagal memperbarui: " + res.message);
-        }
-      })
-      .catch(err => {
-        btn.innerText = "Simpan";
-        btn.disabled = false;
-        alert("Error: " + err.message);
-      });
-    }
-
-    // FUNGSI HAPUS
-    function hapusPengumuman(idInfo) {
-      if (!confirm("Apakah Anda yakin ingin menghapus pengumuman ini?")) return;
-
-      fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'hapusPengumuman',
-          id_info: idInfo
-        })
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === 'success') {
-          alert(res.message);
-          loadPengumuman();
-        } else {
-          alert("Gagal menghapus: " + res.message);
-        }
-      })
-      .catch(err => alert("Error: " + err.message));
     }
   </script>
 </body>
