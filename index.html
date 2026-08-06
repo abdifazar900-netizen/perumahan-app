@@ -934,8 +934,14 @@
       });
     }
 
-    // FORM INPUT KAS OLEH BENDAHARA
+   // FORM INPUT KAS OLEH BENDAHARA (DENGAN PEMILIH BULAN OTOMATIS)
     function bukaModalInputKas() {
+      // Ambil tahun-bulan saat ini secara otomatis dengan format YYYY-MM
+      const tglSekarang = new Date();
+      const tahunIni = tglSekarang.getFullYear();
+      const bulanIni = String(tglSekarang.getMonth() + 1).padStart(2, '0');
+      const defaultBulan = `${tahunIni}-${bulanIni}`;
+
       Swal.fire({
         title: '<strong>Input / Update Kas Warga</strong>',
         html: `
@@ -945,8 +951,8 @@
               <input type="text" id="swal-input-norumah" placeholder="Masukkan No Rumah" class="w-full border rounded-lg p-2.5 text-sm mt-1 uppercase">
             </div>
             <div>
-              <label class="text-xs font-semibold text-gray-600">Bulan & Tahun (Format: YYYY-MM)</label>
-              <input type="text" id="swal-input-bulantahun" placeholder="Contoh: 2026-06" class="w-full border rounded-lg p-2.5 text-sm mt-1">
+              <label class="text-xs font-semibold text-gray-600">Pilih Bulan & Tahun</label>
+              <input type="month" id="swal-input-bulantahun" value="${defaultBulan}" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white">
             </div>
             <div>
               <label class="text-xs font-semibold text-gray-600">Nominal (Rp)</label>
@@ -968,7 +974,7 @@
         preConfirm: () => {
           return {
             no_rumah: document.getElementById('swal-input-norumah').value.trim(),
-            bulan_tahun: document.getElementById('swal-input-bulantahun').value.trim(),
+            bulan_tahun: document.getElementById('swal-input-bulantahun').value.trim(), // Format otomatis menghasilkan "YYYY-MM"
             nominal: document.getElementById('swal-input-nominal').value.trim(),
             status: document.getElementById('swal-input-status').value
           };
