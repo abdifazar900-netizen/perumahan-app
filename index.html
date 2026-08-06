@@ -101,12 +101,18 @@
         </div>
       </div>
 
-     <!-- GRID MENU UTAMA (DENGAN PANIC BUTTON) -->
+     <!-- GRID MENU UTAMA -->
       <div class="p-5 grid grid-cols-3 gap-3 text-center">
         <!-- TOMBOL PANIC BUTTON -->
         <button onclick="tekanPanicButton()" class="col-span-3 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white p-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2 font-bold transition transform active:scale-95">
           <i class="fa-solid fa-triangle-exclamation text-xl animate-pulse"></i>
           <span>🚨 TOMBOL DARURAT (PANIC)</span>
+        </button>
+
+        <!-- TOMBOL KHUSUS BENDAHARA / ADMIN -->
+        <button id="btn-menu-bendahara" onclick="bukaModalInputKas()" class="hidden bg-emerald-50 p-3 rounded-xl border border-emerald-100 text-emerald-600 flex flex-col items-center col-span-3">
+          <i class="fa-solid fa-wallet text-xl mb-1"></i>
+          <span class="text-xs font-semibold">Input / Update Kas Warga (Bendahara)</span>
         </button>
 
         <button onclick="pindahTab('laporan')" class="bg-red-50 p-3 rounded-xl border border-red-100 text-red-600 flex flex-col items-center">
@@ -172,17 +178,15 @@
       </div>
     </div>
 
-   <!-- 5. TAB PENGATURAN AKUN -->
+    <!-- 5. TAB PENGATURAN AKUN -->
     <div id="page-pengaturan" class="hidden p-5 space-y-4">
       <h2 class="font-bold text-lg text-gray-800">Pengaturan Akun Warga</h2>
       
       <div class="bg-gray-50 p-4 rounded-xl border space-y-3 shadow-sm">
         <div>
           <label class="text-xs font-semibold text-gray-600">Nomor HP Baru</label>
-          <!-- Diubah ke type="text" inputmode="numeric" agar tidak ada tanda panah angka -->
           <input type="text" inputmode="numeric" id="set-nohp" placeholder="Masukkan Nomor HP" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
-        
         <div>
           <label class="text-xs font-semibold text-gray-600">Kata Sandi (Password) Baru</label>
           <div class="relative mt-1">
@@ -192,8 +196,7 @@
             </button>
           </div>
         </div>
-
-       <button onclick="konfirmasiSimpanAkun()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm shadow">
+        <button onclick="konfirmasiSimpanAkun()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm shadow">
           SIMPAN PERUBAHAN
         </button>
       </div>
@@ -931,6 +934,80 @@
       });
     }
 
+    // FORM INPUT KAS OLEH BENDAHARA
+    function bukaModalInputKas() {
+      Swal.fire({
+        title: '<strong>Input / Update Kas Warga</strong>',
+        html: `
+          <div class="text-left space-y-3 pt-2">
+            <div>
+              <label class="text-xs font-semibold text-gray-600">Nomor / Blok Rumah (Contoh: B33)</label>
+              <input type="text" id="swal-input-norumah" placeholder="Masukkan No Rumah" class="w-full border rounded-lg p-2.5 text-sm mt-1 uppercase">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600">Bulan & Tahun (Format: YYYY-MM)</label>
+              <input type="text" id="swal-input-bulantahun" placeholder="Contoh: 2026-06" class="w-full border rounded-lg p-2.5 text-sm mt-1">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600">Nominal (Rp)</label>
+              <input type="number" id="swal-input-nominal" placeholder="Contoh: 20000" value="20000" class="w-full border rounded-lg p-2.5 text-sm mt-1">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600">Status Pembayaran</label>
+              <select id="swal-input-status" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white">
+                <option value="Belum Bayar">Belum Bayar</option>
+                <option value="Lunas">Lunas</option>
+              </select>
+            </div>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Simpan Kas',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#059669',
+        preConfirm: () => {
+          return {
+            no_rumah: document.getElementById('swal-input-norumah').value.trim(),
+            bulan_tahun: document.getElementById('swal-input-bulantahun').value.trim(),
+            nominal: document.getElementById('swal-input-nominal').value.trim(),
+            status: document.getElementById('swal-input-status').value
+          };
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const dataInput = result.value;
+          if (!dataInput.no_rumah || !dataInput.bulan_tahun || !dataInput.nominal) {
+            showToast('warning', 'Semua kolom wajib diisi!');
+            return;
+          }
+
+          showLoading("Menyimpan data kas...");
+
+          fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              action: "inputKasWarga",
+              ...dataInput
+            })
+          })
+          .then(res => res.json())
+          .then(res => {
+            Swal.close();
+            if (res.status === 'success') {
+              showToast('success', res.message);
+            } else {
+              showToast('error', res.message);
+            }
+          })
+          .catch(err => {
+            Swal.close();
+            showToast('error', 'Gagal terhubung ke server');
+          });
+        }
+      });
+    }
+
     // NAVIGATION & MODAL HELPERS
     function pindahTab(tabName) {
       document.getElementById("page-dashboard").classList.add("hidden");
@@ -965,8 +1042,7 @@
       }
     }
 
-    // FUNGSI SIMPAN PENGATURAN AKUN
-    // FUNGSI TOGGLE LIHAT / SEMBUNYIKAN PASSWORD
+    // FUNGSI TOGGLE PASSWORD & PENGATURAN AKUN
     function togglePasswordVisibility() {
       const passwordInput = document.getElementById("set-password");
       const eyeIcon = document.getElementById("eye-icon");
@@ -982,7 +1058,6 @@
       }
     }
 
-   // FUNGSI KONFIRMASI DINAMIS & CERDAS (HANYA MENDETEKSI PERUBAHAN BARU)
     function konfirmasiSimpanAkun() {
       if (!currentUser) return;
 
@@ -994,9 +1069,7 @@
         return;
       }
 
-      // Cek apakah ada perubahan nyata (No HP berbeda ATAU Password baru diisi)
       const isHpBerubah = hpBaru !== String(currentUser.no_hp || "");
-      // Karena password lama tidak disimpan di objek currentUser, asumsikan jika kotak password diisi, itu password baru
       const isPasswordDiisi = passBaru !== ""; 
 
       if (!isHpBerubah && !isPasswordDiisi) {
@@ -1004,18 +1077,12 @@
         return;
       }
 
-      // Susun kalimat konfirmasi secara dinamis sesuai yang benar-benar diubah
       let perubahanList = [];
-      if (isHpBerubah) {
-        perubahanList.push("No HP");
-      }
-      if (isPasswordDiisi) {
-        perubahanList.push("Password");
-      }
+      if (isHpBerubah) perubahanList.push("No HP");
+      if (isPasswordDiisi) perubahanList.push("Password");
 
       let teksBagian = perubahanList.join(" dan ");
 
-      // Munculkan dialog konfirmasi SweetAlert2 (YES / NO)
       Swal.fire({
         title: 'Konfirmasi Perubahan',
         text: `Apakah Anda yakin untuk mengubah ${teksBagian}?`,
@@ -1028,19 +1095,11 @@
         reverseButtons: true
       }).then((result) => {
         if (result.isConfirmed) {
-          // Jika password kosong tapi nomor HP berubah, kita bisa ambil password lama / biarkan backend memproses, 
-          // tapi karena backend butuh password baru, jika password tidak diisi kita bisa kirim placeholder atau minta input password lama.
-          // Agar aman, jika password kosong, kita beri peringatan password harus diisi jika ingin ganti sandi, atau jika hanya ganti No HP kita sesuaikan.
-          if (!isPasswordDiisi) {
-            showToast('warning', 'Silakan masukkan Password baru untuk konfirmasi.');
-            return;
-          }
           eksekusiSimpanAkun(hpBaru, passBaru);
         }
       });
     }
 
-    // FUNGSI UTAMA EKSEKUSI KE BACKEND
     function eksekusiSimpanAkun(hpBaru, passBaru) {
       showLoading("Menyimpan perubahan akun...");
 
@@ -1058,7 +1117,7 @@
       .then(data => {
         Swal.close();
         if (data.status === 'success') {
-          currentUser.no_hp = hpBaru; // Update session lokal
+          currentUser.no_hp = hpBaru;
           showToast('success', data.message);
           setTimeout(() => {
             pindahTab('dashboard');
@@ -1079,15 +1138,30 @@
       document.getElementById("page-dashboard").classList.remove("flex");
       document.getElementById("bottom-nav").classList.add("hidden");
       document.getElementById("admin-action-btn").classList.add("hidden");
+      document.getElementById("btn-menu-bendahara").classList.add("hidden");
       document.getElementById("page-login").classList.remove("hidden");
       showToast('info', 'Anda telah keluar');
     }
 
     function checkAdminRole() {
-      if (currentUser && currentUser.role && ['admin', 'rt'].includes(currentUser.role.toLowerCase())) {
+      if (!currentUser || !currentUser.role) return;
+      const role = currentUser.role.toLowerCase();
+
+      // Tombol Tambah Pengumuman (Admin / RT)
+      if (['admin', 'rt'].includes(role)) {
         document.getElementById("admin-action-btn").classList.remove("hidden");
       } else {
         document.getElementById("admin-action-btn").classList.add("hidden");
+      }
+
+      // Tombol Menu Input Kas (Bendahara / Admin)
+      const btnBendahara = document.getElementById("btn-menu-bendahara");
+      if (btnBendahara) {
+        if (['bendahara', 'admin'].includes(role)) {
+          btnBendahara.classList.remove("hidden");
+        } else {
+          btnBendahara.classList.add("hidden");
+        }
       }
     }
 
