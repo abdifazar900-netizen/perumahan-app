@@ -22,14 +22,14 @@
 
   <style>
     @keyframes marquee {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
-}
-.animate-marquee {
-  display: inline-block;
-  white-space: nowrap;
-  animation: marquee 30s linear infinite;
-}
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    .animate-marquee {
+      display: inline-block;
+      white-space: nowrap;
+      animation: marquee 35s linear infinite;
+    }
     body { 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
     }
@@ -91,6 +91,7 @@
 
     <!-- 2. DASHBOARD / BERANDA WARGA -->
     <div id="page-dashboard" class="hidden flex-col">
+      <!-- HEADER HIJAU -->
       <div class="bg-emerald-600 text-white p-5 rounded-b-2xl shadow">
         <div class="flex justify-between items-center mb-4">
           <div>
@@ -120,7 +121,9 @@
             </div>
           </div>
         </div>
-     <!-- GRID MENU UTAMA -->
+      </div>
+
+      <!-- GRID MENU UTAMA -->
       <div class="p-5 grid grid-cols-3 gap-3 text-center">
         <!-- TOMBOL PANIC BUTTON -->
         <button onclick="tekanPanicButton()" class="col-span-3 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white p-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2 font-bold transition transform active:scale-95">
@@ -152,7 +155,7 @@
         </button>
       </div>
 
-      <div class="px-5">
+      <div class="px-5 pb-6">
         <div class="flex justify-between items-center mb-3">
           <h3 class="font-bold text-gray-700 text-sm">Pengumuman Terkini</h3>
           <button onclick="pindahTab('pengumuman')" class="text-xs text-emerald-600 font-semibold">Lihat Semua</button>
@@ -389,7 +392,7 @@
       return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
     }
 
-   // LOGIN
+    // LOGIN
     function prosesLogin() {
       const nohp = document.getElementById("login-nohp").value;
       const pass = document.getElementById("login-password").value;
@@ -438,6 +441,7 @@
         showToast('error', 'Gagal terhubung ke server');
       });
     }
+
     // PENGUMUMAN
     function loadPengumuman() {
       fetch(API_URL + "?action=getPengumuman")
@@ -855,7 +859,7 @@
       }
     }
 
-   // KAS WARGA (MEMBACA DARI RESUME KAS)
+    // KAS WARGA (MEMBACA DARI RESUME KAS)
     function loadDataKasWarga() {
       if (!currentUser || !currentUser.no_rumah) return;
 
@@ -916,6 +920,7 @@
           }
         });
     }
+
     function bukaModalRincianKas() {
       var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
       
@@ -959,7 +964,7 @@
       });
     }
 
-   // FORM INPUT KAS OLEH BENDAHARA (OTOMATIS KONFIRMASI LUNAS)
+    // FORM INPUT KAS OLEH BENDAHARA (OTOMATIS KONFIRMASI LUNAS)
     function bukaModalInputKas() {
       const tglSekarang = new Date();
       const tahunIni = tglSekarang.getFullYear();
@@ -993,7 +998,7 @@
             no_rumah: document.getElementById('swal-input-norumah').value.trim(),
             bulan_tahun: document.getElementById('swal-input-bulantahun').value.trim(),
             nominal: document.getElementById('swal-input-nominal').value.trim(),
-            status: "Lunas" // Otomatis diset Lunas saat bendahara menginput konfirmasi
+            status: "Lunas"
           };
         }
       }).then((result) => {
@@ -1170,14 +1175,12 @@
       if (!currentUser || !currentUser.role) return;
       const role = currentUser.role.toLowerCase();
 
-      // Tombol Tambah Pengumuman (Admin / RT)
       if (['admin', 'rt'].includes(role)) {
         document.getElementById("admin-action-btn").classList.remove("hidden");
       } else {
         document.getElementById("admin-action-btn").classList.add("hidden");
       }
 
-      // Tombol Menu Input Kas (Bendahara / Admin)
       const btnBendahara = document.getElementById("btn-menu-bendahara");
       if (btnBendahara) {
         if (['bendahara', 'admin'].includes(role)) {
@@ -1198,7 +1201,6 @@
       document.getElementById("adm-isi").value = "";
     }
 
-    // FUNGSI TEKAN PANIC BUTTON
     function tekanPanicButton() {
       Swal.fire({
         title: '<strong>🚨 TOMBOL DARURAT</strong>',
