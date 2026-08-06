@@ -1247,6 +1247,75 @@
         }
       });
     }
+    // FUNGSI MENU POPUP ALA WHATSAPP
+    function toggleMenuPopup() {
+      const popup = document.getElementById("popup-menu-admin");
+      const icon = document.getElementById("icon-plus-menu");
+      popup.classList.toggle("hidden");
+      icon.classList.toggle("rotate-45"); // Efek putar ikon plus menjadi silang
+    }
+
+    function tutupMenuPopup() {
+      const popup = document.getElementById("popup-menu-admin");
+      const icon = document.getElementById("icon-plus-menu");
+      popup.classList.add("hidden");
+      icon.classList.remove("rotate-45");
+    }
+
+    // MODAL TAMBAH WARGA
+    function bukaModalTambahWarga() {
+      document.getElementById("modal-tambah-warga").classList.remove("hidden");
+    }
+
+    function tutupModalTambahWarga() {
+      document.getElementById("modal-tambah-warga").classList.add("hidden");
+      document.getElementById("warga-nama").value = "";
+      document.getElementById("warga-nohp").value = "";
+      document.getElementById("warga-password").value = "";
+      document.getElementById("warga-norumah").value = "";
+    }
+
+    function prosesSimpanWarga() {
+      const nama = document.getElementById("warga-nama").value.trim();
+      const nohp = document.getElementById("warga-nohp").value.trim();
+      const password = document.getElementById("warga-password").value.trim();
+      const noRumah = document.getElementById("warga-norumah").value.trim();
+      const role = document.getElementById("warga-role").value;
+
+      if (!nama || !nohp || !password || !noRumah) {
+        showToast('warning', 'Semua kolom wajib diisi!');
+        return;
+      }
+
+      showLoading("Menyimpan data warga...");
+
+      fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "tambahWarga",
+          nama: nama,
+          no_hp: nohp,
+          password: password,
+          no_rumah: noRumah,
+          role: role
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        Swal.close();
+        if (data.status === 'success') {
+          showToast('success', data.message);
+          tutupModalTambahWarga();
+        } else {
+          showToast('error', data.message);
+        }
+      })
+      .catch(err => {
+        Swal.close();
+        showToast('error', 'Gagal terhubung ke server');
+      });
+    }
   </script>
 </body>
 </html>
