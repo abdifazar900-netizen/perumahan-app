@@ -28,7 +28,8 @@
     .animate-marquee {
       display: inline-block;
       white-space: nowrap;
-      animation: marquee 35s linear infinite;
+      animation: marquee 30s linear infinite;
+      will-change: transform; /* Tambahan ini agar browser merender animasi secara instan */
     }
     body { 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
