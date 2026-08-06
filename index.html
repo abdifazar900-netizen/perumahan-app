@@ -240,13 +240,25 @@
 
   </div>
 
-  <!-- TOMBOL MELAYANG ADD PENGUMUMAN (ADMIN/RT) -->
+  <!-- TOMBOL MELAYANG DENGAN MENU POP-UP (ADMIN/RT) -->
   <div id="admin-action-btn" class="hidden fixed bottom-20 right-4 sm:right-auto max-w-md w-full pointer-events-none z-40 flex justify-end px-4">
-    <button onclick="bukaModalPengumuman()" class="pointer-events-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition transform active:scale-95">
-      <i class="fa-solid fa-plus text-2xl"></i>
-    </button>
-  </div>
+    <div class="relative pointer-events-auto">
+      <!-- Menu Pop-up Pilihan (Awalnya Tersembunyi) -->
+      <div id="popup-menu-admin" class="hidden absolute bottom-16 right-0 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 w-48 space-y-1 mb-2">
+        <button onclick="tutupMenuPopup(); bukaModalPengumuman();" class="w-full text-left px-3 py-2.5 hover:bg-emerald-50 rounded-xl text-xs font-semibold text-gray-700 flex items-center gap-2">
+          <i class="fa-solid fa-bullhorn text-emerald-600"></i> Tambah Pengumuman
+        </button>
+        <button onclick="tutupMenuPopup(); bukaModalTambahWarga();" class="w-full text-left px-3 py-2.5 hover:bg-emerald-50 rounded-xl text-xs font-semibold text-gray-700 flex items-center gap-2">
+          <i class="fa-solid fa-user-plus text-emerald-600"></i> Tambah Warga
+        </button>
+      </div>
 
+      <!-- Tombol Utama + (Memanggil fungsi toggleMenuPopup) -->
+      <button onclick="toggleMenuPopup()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition transform active:scale-95">
+        <i id="icon-plus-menu" class="fa-solid fa-plus text-2xl transition-transform"></i>
+      </button>
+    </div>
+  </div>
   <!-- MODAL KONTAK PENGURUS -->
   <div id="modal-kontak" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
