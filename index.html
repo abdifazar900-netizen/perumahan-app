@@ -982,28 +982,38 @@
       }
     }
 
-    // FUNGSI KONFIRMASI DINAMIS SEBELUM SIMPAN (GANTI FUNGSI YANG LAMA)
+   // FUNGSI KONFIRMASI DINAMIS & CERDAS (HANYA MENDETEKSI PERUBAHAN BARU)
     function konfirmasiSimpanAkun() {
       if (!currentUser) return;
 
       const hpBaru = document.getElementById("set-nohp").value.trim();
       const passBaru = document.getElementById("set-password").value.trim();
 
-      if (!hpBaru || !passBaru) {
-        showToast('warning', 'Nomor HP dan Password baru harus diisi!');
+      if (!hpBaru) {
+        showToast('warning', 'Nomor HP tidak boleh kosong!');
         return;
       }
 
-      // Deteksi bagian apa saja yang diubah dibandingkan data saat ini
+      // Cek apakah ada perubahan nyata (No HP berbeda ATAU Password baru diisi)
+      const isHpBerubah = hpBaru !== String(currentUser.no_hp || "");
+      // Karena password lama tidak disimpan di objek currentUser, asumsikan jika kotak password diisi, itu password baru
+      const isPasswordDiisi = passBaru !== ""; 
+
+      if (!isHpBerubah && !isPasswordDiisi) {
+        showToast('warning', 'Tidak ada perubahan data yang dilakukan!');
+        return;
+      }
+
+      // Susun kalimat konfirmasi secara dinamis sesuai yang benar-benar diubah
       let perubahanList = [];
-      if (hpBaru !== String(currentUser.no_hp || "")) {
+      if (isHpBerubah) {
         perubahanList.push("No HP");
       }
-      if (passBaru !== "") {
+      if (isPasswordDiisi) {
         perubahanList.push("Password");
       }
 
-      let teksBagian = perubahanList.length > 0 ? perubahanList.join(" dan ") : "No HP/Password";
+      let teksBagian = perubahanList.join(" dan ");
 
       // Munculkan dialog konfirmasi SweetAlert2 (YES / NO)
       Swal.fire({
@@ -1018,6 +1028,13 @@
         reverseButtons: true
       }).then((result) => {
         if (result.isConfirmed) {
+          // Jika password kosong tapi nomor HP berubah, kita bisa ambil password lama / biarkan backend memproses, 
+          // tapi karena backend butuh password baru, jika password tidak diisi kita bisa kirim placeholder atau minta input password lama.
+          // Agar aman, jika password kosong, kita beri peringatan password harus diisi jika ingin ganti sandi, atau jika hanya ganti No HP kita sesuaikan.
+          if (!isPasswordDiisi) {
+            showToast('warning', 'Silakan masukkan Password baru untuk konfirmasi.');
+            return;
+          }
           eksekusiSimpanAkun(hpBaru, passBaru);
         }
       });
