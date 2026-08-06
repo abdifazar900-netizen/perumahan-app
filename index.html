@@ -1184,7 +1184,7 @@
 
       const btnBendahara = document.getElementById("btn-menu-bendahara");
       if (btnBendahara) {
-        if (['bendahara', 'admin'].includes(role)) {
+        if (role === 'bendahara') {
           btnBendahara.classList.remove("hidden");
         } else {
           btnBendahara.classList.add("hidden");
