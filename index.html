@@ -172,22 +172,28 @@
       </div>
     </div>
 
-    <!-- 5. TAB PENGATURAN AKUN (DIPISAH DI LUAR DIV LAIN) -->
+   <!-- 5. TAB PENGATURAN AKUN -->
     <div id="page-pengaturan" class="hidden p-5 space-y-4">
       <h2 class="font-bold text-lg text-gray-800">Pengaturan Akun Warga</h2>
       
       <div class="bg-gray-50 p-4 rounded-xl border space-y-3 shadow-sm">
         <div>
           <label class="text-xs font-semibold text-gray-600">Nomor HP Baru</label>
-          <input type="number" id="set-nohp" placeholder="Masukkan Nomor HP" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white">
+          <!-- Diubah ke type="text" inputmode="numeric" agar tidak ada tanda panah angka -->
+          <input type="text" inputmode="numeric" id="set-nohp" placeholder="Masukkan Nomor HP" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
+        
         <div>
           <label class="text-xs font-semibold text-gray-600">Kata Sandi (Password) Baru</label>
-          <input type="text" id="set-password" placeholder="Masukkan Password Baru" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white">
+          <div class="relative mt-1">
+            <input type="password" id="set-password" placeholder="Masukkan Password Baru" class="w-full border rounded-lg p-2.5 pr-10 text-sm bg-white">
+            <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none">
+              <i id="eye-icon" class="fa-solid fa-eye text-sm"></i>
+            </button>
+          </div>
         </div>
-        <button onclick="simpanPengaturanAkun()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm shadow">
-          SIMPAN PERUBAHAN
-        </button>
+
+        <button onclick="konfirmasiSimpanAkun()" class="...">SIMPAN PERUBAHAN</button>
       </div>
     </div>
 
@@ -958,17 +964,65 @@
     }
 
     // FUNGSI SIMPAN PENGATURAN AKUN
-    function simpanPengaturanAkun() {
+    // FUNGSI TOGGLE LIHAT / SEMBUNYIKAN PASSWORD
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById("set-password");
+      const eyeIcon = document.getElementById("eye-icon");
+      
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        eyeIcon.classList.remove("fa-eye");
+        eyeIcon.classList.add("fa-eye-slash");
+      } else {
+        passwordInput.type = "password";
+        eyeIcon.classList.remove("fa-eye-slash");
+        eyeIcon.classList.add("fa-eye");
+      }
+    }
+
+    // FUNGSI KONFIRMASI DINAMIS SEBELUM SIMPAN (GANTI FUNGSI YANG LAMA)
+    function konfirmasiSimpanAkun() {
       if (!currentUser) return;
 
-      const hpBaru = document.getElementById("set-nohp").value;
-      const passBaru = document.getElementById("set-password").value;
+      const hpBaru = document.getElementById("set-nohp").value.trim();
+      const passBaru = document.getElementById("set-password").value.trim();
 
       if (!hpBaru || !passBaru) {
         showToast('warning', 'Nomor HP dan Password baru harus diisi!');
         return;
       }
 
+      // Deteksi bagian apa saja yang diubah dibandingkan data saat ini
+      let perubahanList = [];
+      if (hpBaru !== String(currentUser.no_hp || "")) {
+        perubahanList.push("No HP");
+      }
+      if (passBaru !== "") {
+        perubahanList.push("Password");
+      }
+
+      let teksBagian = perubahanList.length > 0 ? perubahanList.join(" dan ") : "No HP/Password";
+
+      // Munculkan dialog konfirmasi SweetAlert2 (YES / NO)
+      Swal.fire({
+        title: 'Konfirmasi Perubahan',
+        text: `Apakah Anda yakin untuk mengubah ${teksBagian}?`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Ubah',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#059669',
+        cancelButtonColor: '#d33',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          eksekusiSimpanAkun(hpBaru, passBaru);
+        }
+      });
+    }
+
+    // FUNGSI UTAMA EKSEKUSI KE BACKEND
+    function eksekusiSimpanAkun(hpBaru, passBaru) {
       showLoading("Menyimpan perubahan akun...");
 
       fetch(API_URL, {
@@ -985,7 +1039,7 @@
       .then(data => {
         Swal.close();
         if (data.status === 'success') {
-          currentUser.no_hp = hpBaru;
+          currentUser.no_hp = hpBaru; // Update session lokal
           showToast('success', data.message);
           setTimeout(() => {
             pindahTab('dashboard');
