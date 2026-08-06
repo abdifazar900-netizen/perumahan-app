@@ -831,7 +831,7 @@
       }
     }
 
-    // KAS WARGA
+   // KAS WARGA (MEMBACA DARI RESUME KAS)
     function loadDataKasWarga() {
       if (!currentUser || !currentUser.no_rumah) return;
 
@@ -840,17 +840,19 @@
       fetch(urlEndpoint + "?action=getKasWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
         .then(res => {
           if (!res.ok) {
-            throw new Error("HTTP Status " + res.status + " (Cek URL Deployment)");
+            throw new Error("HTTP Status " + res.status);
           }
           return res.json();
         })
         .then(res => {
           if (res.status === 'success') {
             dataKasUser = res.data || [];
+            
+            // Filter hanya bulan-bulan yang statusnya "Belum Bayar"
             var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
             var totalTunggakan = 0;
             
-            tunggakan.forEach(k => totalTunggakan += Number(k.nominal || 0));
+            tunggakan.forEach(k => totalTunggakan += Number(k.nominal || 20000));
 
             var cardKasContainer = document.getElementById("status-kas-container");
             if (!cardKasContainer) return;
@@ -890,7 +892,6 @@
           }
         });
     }
-
     function bukaModalRincianKas() {
       var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
       
