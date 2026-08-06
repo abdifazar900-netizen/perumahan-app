@@ -21,6 +21,15 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
+    @keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.animate-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 18s linear infinite;
+}
     body { 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
     }
@@ -100,19 +109,17 @@
           </div>
         </div>
 
-        <!-- BANNER INFORMASI KAS BERJALAN (MARQUEE) -->
+        <!-- BANNER INFORMASI KAS BERJALAN (CSS ANIMATION) -->
         <div class="bg-amber-50 border border-amber-200 text-amber-800 rounded-xl px-3 py-2 overflow-hidden shadow-sm flex items-center">
-          <div class="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md mr-2 flex items-center gap-1 shrink-0">
+          <div class="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md mr-2 flex items-center gap-1 shrink-0 z-10 shadow-sm">
             <i class="fa-solid fa-bullhorn"></i> INFO KAS
           </div>
-          <div class="overflow-hidden whitespace-nowrap w-full">
-            <marquee scrollamount="5" class="text-xs font-semibold text-amber-900 block">
+          <div class="overflow-hidden w-full relative">
+            <div class="animate-marquee text-xs font-semibold text-amber-900">
               💳 Untuk Pembayaran KAS bisa dilakukan melalui Transfer ke Nomor DANA 085945663043 a.n Suryaman &nbsp;&bull;&nbsp; 🏠 Atau datang Langsung ke Gang 4 Blok B30
-            </marquee>
+            </div>
           </div>
         </div>
-      </div>
-
      <!-- GRID MENU UTAMA -->
       <div class="p-5 grid grid-cols-3 gap-3 text-center">
         <!-- TOMBOL PANIC BUTTON -->
