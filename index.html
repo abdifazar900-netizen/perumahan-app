@@ -29,7 +29,7 @@
       display: inline-block;
       white-space: nowrap;
       animation: marquee 30s linear infinite;
-      will-change: transform; /* Tambahan ini agar browser merender animasi secara instan */
+      will-change: transform;
     }
     body { 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
@@ -111,7 +111,7 @@
           </div>
         </div>
 
-        <!-- BANNER INFORMASI KAS BERJALAN (CSS ANIMATION) -->
+        <!-- BANNER INFORMASI KAS BERJALAN -->
         <div class="bg-amber-50 border border-amber-200 text-amber-800 rounded-xl px-3 py-2 overflow-hidden shadow-sm flex items-center">
           <div class="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md mr-2 flex items-center gap-1 shrink-0 z-10 shadow-sm">
             <i class="fa-solid fa-bullhorn"></i> INFO KAS
@@ -177,7 +177,6 @@
     <div id="page-laporan" class="hidden p-5 space-y-4">
       <h2 class="font-bold text-lg text-gray-800">Buat Laporan Aduan</h2>
       
-      <!-- FORM KIRIM LAPORAN -->
       <div class="bg-gray-50 p-4 rounded-xl border space-y-3 shadow-sm">
         <div>
           <label class="text-xs font-semibold text-gray-600">Judul Laporan</label>
@@ -192,7 +191,6 @@
         </button>
       </div>
 
-      <!-- DAFTAR HISTORI & TANGGAPAN LAPORAN -->
       <div class="pt-2">
         <h3 class="font-bold text-gray-700 text-sm mb-3">Daftar Laporan & Riwayat</h3>
         <div id="list-laporan-container" class="space-y-3">
@@ -201,7 +199,51 @@
       </div>
     </div>
 
-    <!-- 5. TAB PENGATURAN AKUN -->
+    <!-- 5. TAB KAS / KEUANGAN (BARU) -->
+    <div id="page-kas" class="hidden p-5 space-y-4">
+      <h2 class="font-bold text-lg text-gray-800">Kas & Keuangan Perumahan</h2>
+      
+      <!-- Header Card Saldo -->
+      <div class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 rounded-2xl shadow-lg">
+        <p class="text-xs opacity-80 uppercase tracking-wider">Saldo Kas Saat Ini</p>
+        <h2 id="kas-saldo" class="text-2xl font-bold mt-1">Rp 0</h2>
+        <div class="grid grid-cols-2 gap-3 mt-4 pt-3 border-t border-emerald-500/30">
+          <div>
+            <p class="text-[10px] opacity-80">Total Pemasukan</p>
+            <p id="kas-pemasukan" class="text-sm font-semibold">Rp 0</p>
+          </div>
+          <div>
+            <p class="text-[10px] opacity-80">Total Pengeluaran</p>
+            <p id="kas-pengeluaran" class="text-sm font-semibold">Rp 0</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tombol Input Pengeluaran (Hanya untuk Bendahara / Admin) -->
+      <div id="wrapper-btn-pengeluaran" class="hidden">
+        <button onclick="bukaModalPengeluaran()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm shadow flex items-center justify-center gap-2">
+          <i class="fa-solid fa-minus-circle"></i> Input Pengeluaran Kas
+        </button>
+      </div>
+
+      <!-- Filter & Riwayat Transaksi -->
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+        <div class="flex justify-between items-center">
+          <h3 class="font-bold text-gray-800 text-sm">Riwayat Transaksi</h3>
+          <select id="filter-kategori-kas" onchange="renderRiwayatKas()" class="border text-xs rounded-lg p-1.5 bg-gray-50 focus:outline-emerald-500">
+            <option value="semua">Semua Transaksi</option>
+            <option value="Pemasukan">Pemasukan</option>
+            <option value="Pengeluaran">Pengeluaran</option>
+          </select>
+        </div>
+
+        <div id="list-riwayat-kas" class="space-y-2.5">
+          <p class="text-xs text-gray-400 italic text-center py-4">Memuat riwayat transaksi...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. TAB PENGATURAN AKUN -->
     <div id="page-pengaturan" class="hidden p-5 space-y-4">
       <h2 class="font-bold text-lg text-gray-800">Pengaturan Akun Warga</h2>
       
@@ -236,6 +278,9 @@
       <button onclick="pindahTab('laporan')" id="nav-laporan">
         <i class="fa-solid fa-file-pen text-lg block"></i> Lapor
       </button>
+      <button onclick="pindahTab('kas')" id="nav-kas">
+        <i class="fa-solid fa-wallet text-lg block"></i> Kas
+      </button>
     </div>
 
   </div>
@@ -243,7 +288,6 @@
   <!-- TOMBOL MELAYANG DENGAN MENU POP-UP (ADMIN/RT) -->
   <div id="admin-action-btn" class="hidden fixed bottom-20 right-4 sm:right-auto max-w-md w-full pointer-events-none z-40 flex justify-end px-4">
     <div class="relative pointer-events-auto">
-      <!-- Menu Pop-up Pilihan (Awalnya Tersembunyi) -->
       <div id="popup-menu-admin" class="hidden absolute bottom-16 right-0 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 w-48 space-y-1 mb-2">
         <button onclick="tutupMenuPopup(); bukaModalPengumuman();" class="w-full text-left px-3 py-2.5 hover:bg-emerald-50 rounded-xl text-xs font-semibold text-gray-700 flex items-center gap-2">
           <i class="fa-solid fa-bullhorn text-emerald-600"></i> Tambah Pengumuman
@@ -252,34 +296,36 @@
           <i class="fa-solid fa-user-plus text-emerald-600"></i> Tambah Warga
         </button>
       </div>
-      <!-- MODAL: TAMBAH WARGA BARU -->
+      
+      <button onclick="toggleMenuPopup()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition transform active:scale-95">
+        <i id="icon-plus-menu" class="fa-solid fa-plus text-2xl transition-transform"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: TAMBAH WARGA BARU -->
   <div id="modal-tambah-warga" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
       <div class="flex justify-between items-center border-b pb-2">
         <h3 class="font-bold text-gray-800">Tambah Warga Baru</h3>
         <button onclick="tutupModalTambahWarga()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
-      
       <div>
         <label class="text-xs font-semibold text-gray-600">Nama Lengkap</label>
         <input type="text" id="warga-nama" placeholder="Contoh: Bpk. Budi" class="w-full border rounded-lg p-2.5 text-sm mt-1">
       </div>
-
       <div>
         <label class="text-xs font-semibold text-gray-600">Nomor HP (WhatsApp)</label>
         <input type="number" id="warga-nohp" placeholder="Contoh: 08123456789" class="w-full border rounded-lg p-2.5 text-sm mt-1">
       </div>
-
       <div>
         <label class="text-xs font-semibold text-gray-600">Kata Sandi (Password Login)</label>
         <input type="text" id="warga-password" placeholder="Buat password warga" class="w-full border rounded-lg p-2.5 text-sm mt-1">
       </div>
-
       <div>
         <label class="text-xs font-semibold text-gray-600">Nomor / Blok Rumah</label>
         <input type="text" id="warga-norumah" placeholder="Contoh: B35" class="w-full border rounded-lg p-2.5 text-sm mt-1 uppercase">
       </div>
-
       <div>
         <label class="text-xs font-semibold text-gray-600">Role / Hak Akses</label>
         <select id="warga-role" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white">
@@ -289,7 +335,6 @@
           <option value="admin">Admin</option>
         </select>
       </div>
-
       <div class="flex space-x-2 pt-2">
         <button onclick="tutupModalTambahWarga()" class="w-1/2 bg-gray-200 text-gray-700 font-bold py-2.5 rounded-lg text-sm">Batal</button>
         <button onclick="prosesSimpanWarga()" id="btn-simpan-warga" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm shadow">Simpan</button>
@@ -297,12 +342,6 @@
     </div>
   </div>
 
-      <!-- Tombol Utama + (Memanggil fungsi toggleMenuPopup) -->
-      <button onclick="toggleMenuPopup()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition transform active:scale-95">
-        <i id="icon-plus-menu" class="fa-solid fa-plus text-2xl transition-transform"></i>
-      </button>
-    </div>
-  </div>
   <!-- MODAL KONTAK PENGURUS -->
   <div id="modal-kontak" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
@@ -313,6 +352,28 @@
         </button>
       </div>
       <div id="modal-kontak-body"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: INPUT PENGELUARAN KAS (BARU) -->
+  <div id="modal-pengeluaran" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-bold text-gray-800">Catat Pengeluaran Kas</h3>
+        <button onclick="tutupModalPengeluaran()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600">Nominal (Rp)</label>
+        <input type="number" id="keluar-nominal" placeholder="Contoh: 50000" class="w-full border rounded-lg p-2.5 text-sm mt-1">
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600">Keterangan Pengeluaran</label>
+        <textarea id="keluar-keterangan" rows="3" placeholder="Contoh: Perbaikan lampu jalan & konsumsi kerja bakti" class="w-full border rounded-lg p-2.5 text-sm mt-1"></textarea>
+      </div>
+      <div class="flex space-x-2 pt-2">
+        <button onclick="tutupModalPengeluaran()" class="w-1/2 bg-gray-200 text-gray-700 font-bold py-2.5 rounded-lg text-sm">Batal</button>
+        <button onclick="prosesSimpanPengeluaran()" class="w-1/2 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm shadow">Simpan</button>
+      </div>
     </div>
   </div>
 
@@ -393,6 +454,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbxYwsbixp0Wvuily2-I48hQhXMdL42T4JkkSlB-qX5ySpsnHzGnxqDhOXwnsQdEVIgGnA/exec";
     let currentUser = null;
     let dataKasUser = [];
+    let cacheDataKas = []; // Variabel cache untuk data riwayat keuangan (pemasukan & pengeluaran)
 
     // FUNGSI UTILITY SWEETALERT2
     function showLoading(pesan = "Memproses data...") {
@@ -474,7 +536,6 @@
           document.getElementById("user-nama").innerText = currentUser.nama;
           document.getElementById("user-norumah").innerText = "Blok " + currentUser.no_rumah;
           
-          // Dashboard langsung terbuka seketika tanpa menunggu data kas
           document.getElementById("page-login").classList.add("hidden");
           document.getElementById("page-dashboard").classList.remove("hidden");
           document.getElementById("page-dashboard").classList.add("flex");
@@ -483,9 +544,10 @@
           checkAdminRole();
           loadPengumuman();
           
-          // Data kas ditarik di latar belakang secara senyap
+          // Muat data kas & keuangan di latar belakang
           setTimeout(() => {
             loadDataKasWarga();
+            muatDataKasKeuangan();
           }, 100);
 
           showToast('success', 'Selamat Datang, ' + currentUser.nama);
@@ -494,6 +556,110 @@
         }
       })
       .catch(err => {
+        Swal.close();
+        showToast('error', 'Gagal terhubung ke server');
+      });
+    }
+
+    // FUNGSI MENU KAS & KEUANGAN (BARU)
+    function muatDataKasKeuangan() {
+      fetch(API_URL + "?action=getKeuangan")
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success') {
+            document.getElementById('kas-saldo').innerText = formatRupiah(data.saldo);
+            document.getElementById('kas-pemasukan').innerText = formatRupiah(data.total_pemasukan);
+            document.getElementById('kas-pengeluaran').innerText = formatRupiah(data.total_pengeluaran);
+            
+            cacheDataKas = data.transaksi || [];
+            renderRiwayatKas();
+          }
+        })
+        .catch(err => console.error("Gagal memuat data keuangan:", err));
+    }
+
+    function renderRiwayatKas() {
+      const filter = document.getElementById('filter-kategori-kas').value;
+      const container = document.getElementById('list-riwayat-kas');
+      if (!container) return;
+      container.innerHTML = '';
+
+      let filtered = cacheDataKas;
+      if (filter !== 'semua') {
+        filtered = cacheDataKas.filter(item => item.kategori === filter);
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Belum ada riwayat transaksi.</p>';
+        return;
+      }
+
+      filtered.forEach(item => {
+        const isMasuk = item.kategori === 'Pemasukan';
+        const warnaNominal = isMasuk ? 'text-emerald-600' : 'text-red-600';
+        const tanda = isMasuk ? '+' : '-';
+        const bgIcon = isMasuk ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600';
+        const ikon = isMasuk ? 'fa-arrow-down' : 'fa-arrow-up';
+
+        container.innerHTML += `
+          <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-xl border border-gray-100">
+            <div class="flex items-center space-x-3">
+              <div class="w-9 h-9 rounded-full ${bgIcon} flex items-center justify-center shrink-0">
+                <i class="fa-solid ${ikon} text-xs"></i>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-gray-800">${item.keterangan}</p>
+                <p class="text-[10px] text-gray-400">${formatTanggalIndo(item.tanggal)}</p>
+              </div>
+            </div>
+            <p class="text-xs font-bold ${warnaNominal} shrink-0">${tanda} ${formatRupiah(item.jumlah)}</p>
+          </div>
+        `;
+      });
+    }
+
+    function bukaModalPengeluaran() {
+      document.getElementById('modal-pengeluaran').classList.remove('hidden');
+    }
+
+    function tutupModalPengeluaran() {
+      document.getElementById('modal-pengeluaran').classList.add('hidden');
+      document.getElementById('keluar-nominal').value = '';
+      document.getElementById('keluar-keterangan').value = '';
+    }
+
+    function prosesSimpanPengeluaran() {
+      const nominal = document.getElementById('keluar-nominal').value;
+      const keterangan = document.getElementById('keluar-keterangan').value.trim();
+
+      if (!nominal || !keterangan) {
+        showToast('warning', 'Nominal dan keterangan wajib diisi!');
+        return;
+      }
+
+      showLoading("Menyimpan pengeluaran...");
+
+      fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "tambahPengeluaran",
+          nominal: Number(nominal),
+          keterangan: keterangan
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        Swal.close();
+        if (data.status === 'success') {
+          showToast('success', data.message);
+          tutupModalPengeluaran();
+          muatDataKasKeuangan();
+        } else {
+          showToast('error', data.message);
+        }
+      })
+      .catch(() => {
         Swal.close();
         showToast('error', 'Gagal terhubung ke server');
       });
@@ -933,7 +1099,6 @@
           if (res.status === 'success') {
             dataKasUser = res.data || [];
             
-            // Filter hanya bulan-bulan yang statusnya "Belum Bayar"
             var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
             var totalTunggakan = 0;
             
@@ -1021,7 +1186,7 @@
       });
     }
 
-    // FORM INPUT KAS OLEH BENDAHARA (OTOMATIS KONFIRMASI LUNAS)
+    // FORM INPUT KAS OLEH BENDAHARA
     function bukaModalInputKas() {
       const tglSekarang = new Date();
       const tahunIni = tglSekarang.getFullYear();
@@ -1081,6 +1246,7 @@
             Swal.close();
             if (res.status === 'success') {
               showToast('success', 'Pembayaran kas berhasil dikonfirmasi Lunas!');
+              muatDataKasKeuangan();
             } else {
               showToast('error', res.message);
             }
@@ -1099,6 +1265,7 @@
       document.getElementById("page-dashboard").classList.remove("flex");
       document.getElementById("page-pengumuman").classList.add("hidden");
       document.getElementById("page-laporan").classList.add("hidden");
+      document.getElementById("page-kas").classList.add("hidden");
       
       var pagePengaturan = document.getElementById("page-pengaturan");
       if (pagePengaturan) pagePengaturan.classList.add("hidden");
@@ -1116,6 +1283,10 @@
         document.getElementById("page-laporan").classList.remove("hidden");
         document.getElementById("nav-laporan").className = "text-emerald-600 font-bold";
         loadLaporanAduan();
+      } else if (tabName === 'kas') {
+        document.getElementById("page-kas").classList.remove("hidden");
+        document.getElementById("nav-kas").className = "text-emerald-600 font-bold";
+        muatDataKasKeuangan();
       } else if (tabName === 'pengaturan') {
         if (pagePengaturan) {
           pagePengaturan.classList.remove("hidden");
@@ -1221,9 +1392,11 @@
       currentUser = null;
       document.getElementById("page-dashboard").classList.add("hidden");
       document.getElementById("page-dashboard").classList.remove("flex");
+      document.getElementById("page-kas").classList.add("hidden");
       document.getElementById("bottom-nav").classList.add("hidden");
       document.getElementById("admin-action-btn").classList.add("hidden");
       document.getElementById("btn-menu-bendahara").classList.add("hidden");
+      document.getElementById("wrapper-btn-pengeluaran").classList.add("hidden");
       document.getElementById("page-login").classList.remove("hidden");
       showToast('info', 'Anda telah keluar');
     }
@@ -1244,6 +1417,16 @@
           btnBendahara.classList.remove("hidden");
         } else {
           btnBendahara.classList.add("hidden");
+        }
+      }
+
+      // Tampilkan tombol Input Pengeluaran di tab Kas khusus untuk Bendahara atau Admin
+      const wrapperBtnKeluar = document.getElementById("wrapper-btn-pengeluaran");
+      if (wrapperBtnKeluar) {
+        if (role === 'bendahara' || role === 'admin') {
+          wrapperBtnKeluar.classList.remove("hidden");
+        } else {
+          wrapperBtnKeluar.classList.add("hidden");
         }
       }
     }
@@ -1303,12 +1486,13 @@
         }
       });
     }
+
     // FUNGSI MENU POPUP ALA WHATSAPP
     function toggleMenuPopup() {
       const popup = document.getElementById("popup-menu-admin");
       const icon = document.getElementById("icon-plus-menu");
       popup.classList.toggle("hidden");
-      icon.classList.toggle("rotate-45"); // Efek putar ikon plus menjadi silang
+      icon.classList.toggle("rotate-45");
     }
 
     function tutupMenuPopup() {
