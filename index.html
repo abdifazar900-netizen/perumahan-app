@@ -1574,29 +1574,40 @@
       if (!currentUser || !currentUser.role) return;
       const role = currentUser.role.toLowerCase();
 
+      // Tombol mengapung (Tambah Warga / Pengumuman) khusus Admin & RT
       if (['admin', 'rt'].includes(role)) {
         document.getElementById("admin-action-btn").classList.remove("hidden");
-        document.getElementById("wrapper-btn-approval").classList.remove("hidden");
       } else {
         document.getElementById("admin-action-btn").classList.add("hidden");
-        document.getElementById("wrapper-btn-approval").classList.add("hidden");
       }
 
+      // Tombol Menu Bendahara di Dashboard
       const btnBendahara = document.getElementById("btn-menu-bendahara");
       if (btnBendahara) {
-        if (role === 'bendahara' || role === 'admin') {
+        if (role === 'bendahara') {
           btnBendahara.classList.remove("hidden");
         } else {
           btnBendahara.classList.add("hidden");
         }
       }
 
+      // Tombol Input Pemasukan & Pengeluaran HANYA untuk Bendahara (Admin tidak perlu)
       const wrapperBtnKeluar = document.getElementById("wrapper-btn-pengeluaran");
       if (wrapperBtnKeluar) {
-        if (role === 'bendahara' || role === 'admin') {
+        if (role === 'bendahara') {
           wrapperBtnKeluar.classList.remove("hidden");
         } else {
           wrapperBtnKeluar.classList.add("hidden");
+        }
+      }
+
+      // Tombol Persetujuan (Approval) HANYA untuk Admin & RT
+      const wrapperBtnApproval = document.getElementById("wrapper-btn-approval");
+      if (wrapperBtnApproval) {
+        if (['admin', 'rt'].includes(role)) {
+          wrapperBtnApproval.classList.remove("hidden");
+        } else {
+          wrapperBtnApproval.classList.add("hidden");
         }
       }
     }
