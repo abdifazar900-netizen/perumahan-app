@@ -30,10 +30,8 @@
       animation: marquee 30s linear infinite;
       will-change: transform;
     }
-    
-    body {  
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;  
-      background-color: #f3f4f6;
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
     }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -49,18 +47,7 @@
       -webkit-user-select: auto !important;
       user-select: auto !important;
     }
-
-    /* Memastikan halaman login pas, berada di tengah, dan tidak memunculkan scrollbar */
-    #page-login {
-      min-height: 100vh;
-      max-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      overflow: hidden;
-    }
   </style>
-
   <link rel="manifest" href="manifest.json">
   <script>
     if ('serviceWorker' in navigator) {
