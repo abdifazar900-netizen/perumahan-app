@@ -31,8 +31,16 @@
       animation: marquee 30s linear infinite;
       will-change: transform;
     }
-    body { 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    
+    /* Mengunci layar agar body tidak bisa scroll secara keseluruhan */
+    html, body { 
+      height: 100%;
+      margin: 0;
+      overflow: hidden; 
+    }
+
+    body {  
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;  
     }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -47,6 +55,17 @@
     input, textarea, select {
       -webkit-user-select: auto !important;
       user-select: auto !important;
+    }
+
+    /* Memastikan kontainer utama aplikasi & halaman login pas terkunci di layar */
+    .w-full.max-w-md {
+      height: 100vh;
+      overflow-y: auto; /* Agar dashboard tetap bisa di-scroll saat sudah login */
+    }
+
+    #page-login {
+      height: 100vh;
+      overflow: hidden;
     }
   </style>
 
