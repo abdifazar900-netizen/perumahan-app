@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   
-  <title>Aplikasi Perumahan</title>
+  <title>D'Mutiara Sodong</title>
 
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -199,7 +199,7 @@
       </div>
     </div>
 
-    <!-- 5. TAB KAS / KEUANGAN (BARU) -->
+    <!-- 5. TAB KAS / KEUANGAN (DIPERBARUI) -->
     <div id="page-kas" class="hidden p-5 space-y-4">
       <h2 class="font-bold text-lg text-gray-800">Kas & Keuangan Perumahan</h2>
       
@@ -213,16 +213,26 @@
             <p id="kas-pemasukan" class="text-sm font-semibold">Rp 0</p>
           </div>
           <div>
-            <p class="text-[10px] opacity-80">Total Pengeluaran</p>
+            <p class="text-[10px] opacity-80">Total Pengeluaran (Disetujui)</p>
             <p id="kas-pengeluaran" class="text-sm font-semibold">Rp 0</p>
           </div>
         </div>
       </div>
 
-      <!-- Tombol Input Pengeluaran (Hanya untuk Bendahara / Admin) -->
-      <div id="wrapper-btn-pengeluaran" class="hidden">
+      <!-- Tombol Aksi Keuangan (Bendahara / Admin) -->
+      <div id="wrapper-btn-pengeluaran" class="hidden space-y-2">
+        <button onclick="bukaModalPemasukanNonKas()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm shadow flex items-center justify-center gap-2">
+          <i class="fa-solid fa-plus-circle"></i> Input Pemasukan Non-Kas (Penjualan/Sumbangan)
+        </button>
         <button onclick="bukaModalPengeluaran()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl text-sm shadow flex items-center justify-center gap-2">
-          <i class="fa-solid fa-minus-circle"></i> Input Pengeluaran Kas
+          <i class="fa-solid fa-minus-circle"></i> Input Pengeluaran (Butuh Approval Admin)
+        </button>
+      </div>
+
+      <!-- Tombol Menu Approval Pengeluaran Khusus Admin/RT -->
+      <div id="wrapper-btn-approval" class="hidden">
+        <button onclick="bukaModalApprovalPengeluaran()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl text-sm shadow flex items-center justify-center gap-2">
+          <i class="fa-solid fa-clipboard-check"></i> Persetujuan Pengeluaran Kas (Admin/RT)
         </button>
       </div>
 
@@ -355,7 +365,37 @@
     </div>
   </div>
 
-  <!-- MODAL: INPUT PENGELUARAN KAS (BARU) -->
+  <!-- MODAL: INPUT PEMASUKAN NON-KAS (BARU) -->
+  <div id="modal-pemasukan-nonkas" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-bold text-gray-800">Catat Pemasukan Non-Kas</h3>
+        <button onclick="tutupModalPemasukanNonKas()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600">Kategori / Sumber</label>
+        <select id="inc-kategori" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white">
+          <option value="Penjualan">Penjualan</option>
+          <option value="Sumbangan">Sumbangan / Donasi</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600">Nominal (Rp)</label>
+        <input type="number" id="inc-nominal" placeholder="Contoh: 100000" class="w-full border rounded-lg p-2.5 text-sm mt-1">
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600">Keterangan / Catatan</label>
+        <textarea id="inc-keterangan" rows="3" placeholder="Contoh: Hasil penjualan kupon bazaar / sumbangan warga" class="w-full border rounded-lg p-2.5 text-sm mt-1"></textarea>
+      </div>
+      <div class="flex space-x-2 pt-2">
+        <button onclick="tutupModalPemasukanNonKas()" class="w-1/2 bg-gray-200 text-gray-700 font-bold py-2.5 rounded-lg text-sm">Batal</button>
+        <button onclick="prosesSimpanPemasukanNonKas()" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg text-sm shadow">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: INPUT PENGELUARAN KAS -->
   <div id="modal-pengeluaran" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
       <div class="flex justify-between items-center border-b pb-2">
@@ -372,7 +412,7 @@
       </div>
       <div class="flex space-x-2 pt-2">
         <button onclick="tutupModalPengeluaran()" class="w-1/2 bg-gray-200 text-gray-700 font-bold py-2.5 rounded-lg text-sm">Batal</button>
-        <button onclick="prosesSimpanPengeluaran()" class="w-1/2 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm shadow">Simpan</button>
+        <button onclick="prosesSimpanPengeluaran()" class="w-1/2 bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm shadow">Ajukan Pengeluaran</button>
       </div>
     </div>
   </div>
@@ -454,7 +494,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbxYwsbixp0Wvuily2-I48hQhXMdL42T4JkkSlB-qX5ySpsnHzGnxqDhOXwnsQdEVIgGnA/exec";
     let currentUser = null;
     let dataKasUser = [];
-    let cacheDataKas = []; // Variabel cache untuk data riwayat keuangan (pemasukan & pengeluaran)
+    let cacheDataKas = []; 
 
     // FUNGSI UTILITY SWEETALERT2
     function showLoading(pesan = "Memproses data...") {
@@ -544,7 +584,6 @@
           checkAdminRole();
           loadPengumuman();
           
-          // Muat data kas & keuangan di latar belakang
           setTimeout(() => {
             loadDataKasWarga();
             muatDataKasKeuangan();
@@ -561,7 +600,7 @@
       });
     }
 
-    // FUNGSI MENU KAS & KEUANGAN (BARU)
+    // FUNGSI MENU KAS & KEUANGAN
     function muatDataKasKeuangan() {
       fetch(API_URL + "?action=getKeuangan")
         .then(res => res.json())
@@ -586,7 +625,7 @@
 
       let filtered = cacheDataKas;
       if (filter !== 'semua') {
-        filtered = cacheDataKas.filter(item => item.kategori === filter);
+        filtered = cacheDataKas.filter(item => item.kategori === filter || (filter === 'Pemasukan' && item.kategori !== 'Pengeluaran'));
       }
 
       if (filtered.length === 0) {
@@ -595,7 +634,7 @@
       }
 
       filtered.forEach(item => {
-        const isMasuk = item.kategori === 'Pemasukan';
+        const isMasuk = item.kategori !== 'Pengeluaran';
         const warnaNominal = isMasuk ? 'text-emerald-600' : 'text-red-600';
         const tanda = isMasuk ? '+' : '-';
         const bgIcon = isMasuk ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600';
@@ -609,7 +648,7 @@
               </div>
               <div>
                 <p class="text-xs font-bold text-gray-800">${item.keterangan}</p>
-                <p class="text-[10px] text-gray-400">${formatTanggalIndo(item.tanggal)}</p>
+                <p class="text-[10px] text-gray-400">${item.tanggal} &bull; <span class="font-semibold text-emerald-600">${item.kategori}</span></p>
               </div>
             </div>
             <p class="text-xs font-bold ${warnaNominal} shrink-0">${tanda} ${formatRupiah(item.jumlah)}</p>
@@ -618,6 +657,57 @@
       });
     }
 
+    // MODAL PEMASUKAN NON-KAS (BENDAHARA)
+    function bukaModalPemasukanNonKas() {
+      document.getElementById('modal-pemasukan-nonkas').classList.remove('hidden');
+    }
+
+    function tutupModalPemasukanNonKas() {
+      document.getElementById('modal-pemasukan-nonkas').classList.add('hidden');
+      document.getElementById('inc-nominal').value = '';
+      document.getElementById('inc-keterangan').value = '';
+    }
+
+    function prosesSimpanPemasukanNonKas() {
+      const kategori = document.getElementById('inc-kategori').value;
+      const nominal = document.getElementById('inc-nominal').value;
+      const keterangan = document.getElementById('inc-keterangan').value.trim();
+
+      if (!nominal || !keterangan) {
+        showToast('warning', 'Nominal dan keterangan wajib diisi!');
+        return;
+      }
+
+      showLoading("Menyimpan pemasukan...");
+
+      fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "tambahPemasukanNonKas",
+          kategori: kategori,
+          nominal: Number(nominal),
+          keterangan: keterangan
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        Swal.close();
+        if (data.status === 'success') {
+          showToast('success', data.message);
+          tutupModalPemasukanNonKas();
+          muatDataKasKeuangan();
+        } else {
+          showToast('error', data.message);
+        }
+      })
+      .catch(() => {
+        Swal.close();
+        showToast('error', 'Gagal terhubung ke server');
+      });
+    }
+
+    // MODAL PENGELUARAN KAS
     function bukaModalPengeluaran() {
       document.getElementById('modal-pengeluaran').classList.remove('hidden');
     }
@@ -637,7 +727,7 @@
         return;
       }
 
-      showLoading("Menyimpan pengeluaran...");
+      showLoading("Mengajukan pengeluaran...");
 
       fetch(API_URL, {
         method: "POST",
@@ -662,6 +752,84 @@
       .catch(() => {
         Swal.close();
         showToast('error', 'Gagal terhubung ke server');
+      });
+    }
+
+    // MENU APPROVAL PENGELUARAN KHUSUS ADMIN/RT
+    function bukaModalApprovalPengeluaran() {
+      showLoading("Memuat data pengeluaran pending...");
+
+      fetch(API_URL + "?action=getPengeluaranPending")
+        .then(res => res.json())
+        .then(res => {
+          Swal.close();
+          if (res.status === 'success') {
+            const pendingList = res.data || [];
+            if (pendingList.length === 0) {
+              Swal.fire('Informasi', 'Tidak ada pengeluaran kas yang menunggu persetujuan.', 'info');
+              return;
+            }
+
+            let htmlContent = '<div class="space-y-3 text-left max-h-80 overflow-y-auto">';
+            pendingList.forEach(item => {
+              htmlContent += `
+                <div class="p-3 bg-gray-50 rounded-xl border border-gray-200 flex flex-col gap-2">
+                  <div>
+                    <p class="text-xs text-gray-400">${item.tanggal}</p>
+                    <p class="text-xs font-bold text-gray-800">${item.keterangan}</p>
+                    <p class="text-sm font-extrabold text-red-600 mt-0.5">${formatRupiah(item.nominal)}</p>
+                  </div>
+                  <div class="flex gap-2 pt-2 border-t border-gray-200">
+                    <button onclick="prosesApproval('${item.id_pengeluaran}', 'Disetujui')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 rounded-lg">Setujui</button>
+                    <button onclick="prosesApproval('${item.id_pengeluaran}', 'Ditolak')" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold text-xs py-2 rounded-lg">Tolak</button>
+                  </div>
+                </div>
+              `;
+            });
+            htmlContent += '</div>';
+
+            Swal.fire({
+              title: '<strong>Persetujuan Pengeluaran</strong>',
+              html: htmlContent,
+              showConfirmButton: false,
+              showCloseButton: true
+            });
+          } else {
+            showToast('error', res.message);
+          }
+        })
+        .catch(() => {
+          Swal.close();
+          showToast('error', 'Gagal memuat data persetujuan');
+        });
+    }
+
+    function prosesApproval(idPengeluaran, status) {
+      showLoading("Memproses " + status.toLowerCase() + "...");
+
+      fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "updateApprovalPengeluaran",
+          id_pengeluaran: idPengeluaran,
+          status: status
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        Swal.close();
+        if (data.status === 'success') {
+          showToast('success', data.message);
+          muatDataKasKeuangan();
+          Swal.close();
+        } else {
+          showToast('error', data.message);
+        }
+      })
+      .catch(() => {
+        Swal.close();
+        showToast('error', 'Gagal memproses approval');
       });
     }
 
@@ -1397,6 +1565,7 @@
       document.getElementById("admin-action-btn").classList.add("hidden");
       document.getElementById("btn-menu-bendahara").classList.add("hidden");
       document.getElementById("wrapper-btn-pengeluaran").classList.add("hidden");
+      document.getElementById("wrapper-btn-approval").classList.add("hidden");
       document.getElementById("page-login").classList.remove("hidden");
       showToast('info', 'Anda telah keluar');
     }
@@ -1407,20 +1576,21 @@
 
       if (['admin', 'rt'].includes(role)) {
         document.getElementById("admin-action-btn").classList.remove("hidden");
+        document.getElementById("wrapper-btn-approval").classList.remove("hidden");
       } else {
         document.getElementById("admin-action-btn").classList.add("hidden");
+        document.getElementById("wrapper-btn-approval").classList.add("hidden");
       }
 
       const btnBendahara = document.getElementById("btn-menu-bendahara");
       if (btnBendahara) {
-        if (role === 'bendahara') {
+        if (role === 'bendahara' || role === 'admin') {
           btnBendahara.classList.remove("hidden");
         } else {
           btnBendahara.classList.add("hidden");
         }
       }
 
-      // Tampilkan tombol Input Pengeluaran di tab Kas khusus untuk Bendahara atau Admin
       const wrapperBtnKeluar = document.getElementById("wrapper-btn-pengeluaran");
       if (wrapperBtnKeluar) {
         if (role === 'bendahara' || role === 'admin') {
