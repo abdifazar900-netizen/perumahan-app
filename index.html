@@ -32,11 +32,14 @@
       will-change: transform;
     }
     
-    /* Mengunci layar agar body tidak bisa scroll secara keseluruhan */
+    /* Kunci total scroll di level browser */
     html, body { 
-      height: 100%;
+      height: 100vh;
+      width: 100vw;
       margin: 0;
-      overflow: hidden; 
+      padding: 0;
+      overflow: hidden !important;
+      position: fixed;
     }
 
     body {  
@@ -57,15 +60,18 @@
       user-select: auto !important;
     }
 
-    /* Memastikan kontainer utama aplikasi & halaman login pas terkunci di layar */
+    /* Memaksa pembungkus utama agar pas tinggi layar dan tidak melebihi batas */
     .w-full.max-w-md {
-      height: 100vh;
-      overflow-y: auto; /* Agar dashboard tetap bisa di-scroll saat sudah login */
+      height: 100vh !important;
+      max-height: 100vh !important;
+      overflow: hidden !important;
     }
 
+    /* Halaman login dipastikan memenuhi tinggi layar penuh tanpa sisa */
     #page-login {
-      height: 100vh;
-      overflow: hidden;
+      height: 100vh !important;
+      max-height: 100vh !important;
+      overflow: hidden !important;
     }
   </style>
 
