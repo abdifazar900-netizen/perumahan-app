@@ -73,7 +73,7 @@
         
         <div>
           <label class="text-xs font-semibold text-gray-500">Nomor HP</label>
-          <input type="number" id="login-nohp" placeholder="Masukan No HP" class="w-full border rounded-lg p-3 text-sm focus:outline-emerald-500 mt-1">
+          <input type="text" inputmode="numeric" id="login-nohp" placeholder="Masukan No HP" class="w-full border rounded-lg p-3 text-sm focus:outline-emerald-500 mt-1" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
         </div>
 
         <div>
