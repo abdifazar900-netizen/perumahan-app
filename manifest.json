@@ -11,7 +11,7 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/25/25694.png",
+      "src": "PerumLogo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
