@@ -211,6 +211,14 @@
           </div>
         </div>
 
+        <!-- FITUR PENCARIAN BARU -->
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <i class="fa-solid fa-magnifying-glass text-gray-400 text-xs"></i>
+          </div>
+          <input type="text" id="search-bumdes" oninput="cariWargaBumdes()" class="bg-white border border-gray-200 text-gray-800 text-xs rounded-xl focus:ring-emerald-500 focus:border-emerald-500 block w-full pl-9 p-3 shadow-sm" placeholder="Cari Nama atau Blok Rumah...">
+        </div>
+
         <!-- Tabel Warga Belum Bayar -->
         <div class="bg-white rounded-xl border shadow-sm space-y-3 overflow-hidden">
           <div class="bg-gray-50 p-3 border-b flex justify-between items-center">
@@ -2038,6 +2046,63 @@
         Swal.close();
         showToast('error', 'Gagal terhubung ke server');
       });
+    }
+    // FITUR PENCARIAN WAKTU NYATA
+    function cariWargaBumdes() {
+      const input = document.getElementById("search-bumdes").value.toLowerCase();
+      const items = document.getElementsByClassName("warga-item");
+
+      for (let i = 0; i < items.length; i++) {
+        const textData = items[i].innerText.toLowerCase();
+        if (textData.includes(input)) {
+          items[i].style.display = "flex";
+        } else {
+          items[i].style.display = "none";
+        }
+      }
+    }
+
+    // UPDATE RENDER & TARIF JS
+    function loadDashboardBumdes() {
+      document.getElementById('list-warga-bumdes').innerHTML = '<p class="text-gray-400 italic text-center py-4">Memuat data tagihan...</p>';
+      
+      fetch(API_URL + "?action=getRekapSampahBumdes")
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success') {
+            document.getElementById('bumdes-penerimaan').innerText = formatRupiah(res.penerimaan || 0);
+            document.getElementById('bumdes-belumbayar').innerText = (res.total_tunggakan_warga || 0) + " Warga";
+            
+            const container = document.getElementById('list-warga-bumdes');
+            container.innerHTML = '';
+            
+            if (res.data_warga && res.data_warga.length > 0) {
+              res.data_warga.forEach(w => {
+                let cleanHp = String(w.no_hp || '').replace(/[^0-9]/g, '');
+                if (cleanHp.startsWith('0')) cleanHp = '62' + cleanHp.substring(1);
+
+                // Tambahan class "warga-item" agar bisa dicari
+                container.innerHTML += `
+                  <div class="warga-item flex justify-between items-center p-2.5 border-b last:border-b-0 hover:bg-gray-50">
+                    <div>
+                      <p class="font-bold text-gray-800">${w.nama} <span class="text-gray-400 font-normal">(Blok ${w.no_rumah})</span></p>
+                      <p class="text-[10px] text-red-600 font-semibold mt-0.5">Nunggak ${w.jumlah_bulan} Bulan &bull; ${formatRupiah(w.total_tagihan)}</p>
+                    </div>
+                    <div class="flex gap-1.5">
+                      <a href="https://wa.me/${cleanHp}?text=Halo%20${encodeURIComponent(w.nama)},%20mohon%20segera%20lunasi%20tunggakan%20iuran%20sampah." target="_blank" class="bg-emerald-100 text-emerald-700 px-2 py-1.5 rounded font-bold flex items-center justify-center"><i class="fa-brands fa-whatsapp"></i></a>
+                      <button onclick="bukaModalInputSampah('${w.no_rumah}')" class="bg-blue-600 text-white px-3 py-1.5 rounded font-bold">Bayar</button>
+                    </div>
+                  </div>
+                `;
+              });
+            } else {
+              container.innerHTML = '<p class="text-emerald-600 font-bold text-center py-4">Semua tagihan lunas! 🎉</p>';
+            }
+          }
+        })
+        .catch(err => {
+          document.getElementById('list-warga-bumdes').innerHTML = '<p class="text-red-500 italic text-center py-4">Gagal memuat data dari server.</p>';
+        });
     }
   </script>
 </body>
