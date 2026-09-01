@@ -211,7 +211,7 @@
           </div>
         </div>
 
-        <!-- FITUR PENCARIAN BARU -->
+        <!-- FITUR PENCARIAN -->
         <div class="relative">
           <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <i class="fa-solid fa-magnifying-glass text-gray-400 text-xs"></i>
@@ -263,11 +263,10 @@
       </div>
     </div>
 
-    <!-- 5. TAB KAS / KEUANGAN (DIPERBARUI) -->
+    <!-- 5. TAB KAS / KEUANGAN -->
     <div id="page-kas" class="hidden p-5 space-y-4">
       <h2 class="font-bold text-lg text-gray-800">Kas & Keuangan Perumahan</h2>
       
-      <!-- Header Card Saldo -->
       <div class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-5 rounded-2xl shadow-lg">
         <p class="text-xs opacity-80 uppercase tracking-wider">Saldo Kas Saat Ini</p>
         <h2 id="kas-saldo" class="text-2xl font-bold mt-1">Rp 0</h2>
@@ -283,7 +282,6 @@
         </div>
       </div>
 
-      <!-- Tombol Aksi Keuangan (Bendahara / Admin) -->
       <div id="wrapper-btn-pengeluaran" class="hidden space-y-2">
         <button onclick="bukaModalPemasukanNonKas()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-sm shadow flex items-center justify-center gap-2">
           <i class="fa-solid fa-plus-circle"></i> Input Pemasukan Non-Kas (Penjualan/Sumbangan)
@@ -293,14 +291,12 @@
         </button>
       </div>
 
-      <!-- Tombol Menu Approval Pengeluaran Khusus Admin/RT -->
       <div id="wrapper-btn-approval" class="hidden">
         <button onclick="bukaModalApprovalPengeluaran()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl text-sm shadow flex items-center justify-center gap-2">
           <i class="fa-solid fa-clipboard-check"></i> Persetujuan Pengeluaran Kas (Admin/RT)
         </button>
       </div>
 
-      <!-- Filter & Riwayat Transaksi -->
       <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
         <div class="flex justify-between items-center">
           <h3 class="font-bold text-gray-800 text-sm">Riwayat Transaksi</h3>
@@ -359,7 +355,7 @@
 
   </div>
 
-  <!-- TOMBOL MELAYANG DENGAN MENU POP-UP (ADMIN/RT) -->
+  <!-- TOMBOL MELAYANG ADMIN -->
   <div id="admin-action-btn" class="hidden fixed bottom-20 right-4 sm:right-auto max-w-md w-full pointer-events-none z-40 flex justify-end px-4">
     <div class="relative pointer-events-auto">
       <div id="popup-menu-admin" class="hidden absolute bottom-16 right-0 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 w-48 space-y-1 mb-2">
@@ -377,7 +373,7 @@
     </div>
   </div>
 
-  <!-- MODAL: TAMBAH WARGA BARU -->
+  <!-- MODAL: TAMBAH WARGA -->
   <div id="modal-tambah-warga" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
       <div class="flex justify-between items-center border-b pb-2">
@@ -430,7 +426,7 @@
     </div>
   </div>
 
-  <!-- MODAL: INPUT PEMASUKAN NON-KAS (BARU) -->
+  <!-- MODAL: PEMASUKAN NON-KAS -->
   <div id="modal-pemasukan-nonkas" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
       <div class="flex justify-between items-center border-b pb-2">
@@ -460,7 +456,7 @@
     </div>
   </div>
 
-  <!-- MODAL: INPUT PENGELUARAN KAS -->
+  <!-- MODAL: PENGELUARAN KAS -->
   <div id="modal-pengeluaran" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
       <div class="flex justify-between items-center border-b pb-2">
@@ -482,7 +478,7 @@
     </div>
   </div>
 
-  <!-- MODAL 1: TAMBAH PENGUMUMAN -->
+  <!-- MODAL: TAMBAH PENGUMUMAN -->
   <div id="modal-pengumuman" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
       <div class="flex justify-between items-center border-b pb-2">
@@ -517,7 +513,7 @@
     </div>
   </div>
 
-  <!-- MODAL 2: EDIT PENGUMUMAN -->
+  <!-- MODAL: EDIT PENGUMUMAN -->
   <div id="modal-edit-pengumuman" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl w-full max-w-md p-5 space-y-4 shadow-2xl">
       <div class="flex justify-between items-center border-b pb-2">
@@ -562,15 +558,12 @@
     let dataSampahUser = [];
     let cacheDataKas = []; 
 
-    // FUNGSI UTILITY SWEETALERT2
     function showLoading(pesan = "Memproses data...") {
       Swal.fire({
         title: pesan,
         allowOutsideClick: false,
         allowEscapeKey: false,
-        didOpen: () => {
-          Swal.showLoading();
-        }
+        didOpen: () => { Swal.showLoading(); }
       });
     }
 
@@ -582,33 +575,21 @@
         timer: 2500,
         timerProgressBar: true
       });
-
-      Toast.fire({
-        icon: icon,
-        title: message
-      });
+      Toast.fire({ icon: icon, title: message });
     }
 
-    // FORMATTING HELPERS
     function formatTanggalIndo(tglString) {
       if (!tglString) return "-";
       var d = new Date(tglString);
       if (isNaN(d.getTime())) return tglString;
-
-      var tgl = String(d.getDate()).padStart(2, '0');
-      var bln = String(d.getMonth() + 1).padStart(2, '0');
-      var thn = d.getFullYear();
-
-      return tgl + '/' + bln + '/' + thn;
+      return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
     }
 
     function formatBulanTahun(val) {
       if (!val) return "-";
       var d = new Date(val);
       if (!isNaN(d.getTime())) {
-        var bln = String(d.getMonth() + 1).padStart(2, '0');
-        var thn = d.getFullYear();
-        return bln + '/' + thn;
+        return String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear();
       }
       return String(val);
     }
@@ -668,13 +649,13 @@
           showToast('error', data.message);
         }
       })
-      .catch(err => {
+      .catch(() => {
         Swal.close();
         showToast('error', 'Gagal terhubung ke server');
       });
     }
 
-    // FUNGSI DASHBOARD KHUSUS BUMDES (ASLI / LIVE DATA)
+    // DASHBOARD BUMDES
     function loadDashboardBumdes() {
       document.getElementById('list-warga-bumdes').innerHTML = '<p class="text-gray-400 italic text-center py-4">Memuat data tagihan...</p>';
       
@@ -694,7 +675,7 @@
                 if (cleanHp.startsWith('0')) cleanHp = '62' + cleanHp.substring(1);
 
                 container.innerHTML += `
-                  <div class="flex justify-between items-center p-2.5 border-b last:border-b-0 hover:bg-gray-50">
+                  <div class="warga-item flex justify-between items-center p-2.5 border-b last:border-b-0 hover:bg-gray-50">
                     <div>
                       <p class="font-bold text-gray-800">${w.nama} <span class="text-gray-400 font-normal">(Blok ${w.no_rumah})</span></p>
                       <p class="text-[10px] text-red-600 font-semibold mt-0.5">Nunggak ${w.jumlah_bulan} Bulan &bull; ${formatRupiah(w.total_tagihan)}</p>
@@ -711,12 +692,25 @@
             }
           }
         })
-        .catch(err => {
+        .catch(() => {
           document.getElementById('list-warga-bumdes').innerHTML = '<p class="text-red-500 italic text-center py-4">Gagal memuat data dari server.</p>';
         });
     }
 
-    // FUNGSI MENU KAS & KEUANGAN
+    function cariWargaBumdes() {
+      const input = document.getElementById("search-bumdes").value.toLowerCase();
+      const items = document.getElementsByClassName("warga-item");
+
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].innerText.toLowerCase().includes(input)) {
+          items[i].style.display = "flex";
+        } else {
+          items[i].style.display = "none";
+        }
+      }
+    }
+
+    // KEUANGAN
     function muatDataKasKeuangan() {
       fetch(API_URL + "?action=getKeuangan")
         .then(res => res.json())
@@ -725,7 +719,6 @@
             document.getElementById('kas-saldo').innerText = formatRupiah(data.saldo);
             document.getElementById('kas-pemasukan').innerText = formatRupiah(data.total_pemasukan);
             document.getElementById('kas-pengeluaran').innerText = formatRupiah(data.total_pengeluaran);
-            
             cacheDataKas = data.transaksi || [];
             renderRiwayatKas();
           }
@@ -751,34 +744,26 @@
 
       filtered.forEach(item => {
         const isMasuk = item.kategori !== 'Pengeluaran';
-        const warnaNominal = isMasuk ? 'text-emerald-600' : 'text-red-600';
-        const tanda = isMasuk ? '+' : '-';
-        const bgIcon = isMasuk ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600';
-        const ikon = isMasuk ? 'fa-arrow-down' : 'fa-arrow-up';
-
         container.innerHTML += `
           <div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-xl border border-gray-100">
             <div class="flex items-center space-x-3">
-              <div class="w-9 h-9 rounded-full ${bgIcon} flex items-center justify-center shrink-0">
-                <i class="fa-solid ${ikon} text-xs"></i>
+              <div class="w-9 h-9 rounded-full ${isMasuk ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'} flex items-center justify-center shrink-0">
+                <i class="fa-solid ${isMasuk ? 'fa-arrow-down' : 'fa-arrow-up'} text-xs"></i>
               </div>
               <div>
                 <p class="text-xs font-bold text-gray-800">${item.keterangan}</p>
                 <p class="text-[10px] text-gray-400">${item.tanggal} &bull; <span class="font-semibold text-emerald-600">${item.kategori}</span></p>
               </div>
             </div>
-            <p class="text-xs font-bold ${warnaNominal} shrink-0">${tanda} ${formatRupiah(item.jumlah)}</p>
+            <p class="text-xs font-bold ${isMasuk ? 'text-emerald-600' : 'text-red-600'} shrink-0">${isMasuk ? '+' : '-'} ${formatRupiah(item.jumlah)}</p>
           </div>
         `;
       });
     }
 
-    // MODAL PEMASUKAN NON-KAS (BENDAHARA)
-    function bukaModalPemasukanNonKas() {
-      document.getElementById('modal-pemasukan-nonkas').classList.remove('hidden');
-    }
-
-    function tutupModalPemasukanNonKas() {
+    // PEMASUKAN & PENGELUARAN NON-KAS
+    function bukaModalPemasukanNonKas() { document.getElementById('modal-pemasukan-nonkas').classList.remove('hidden'); }
+    function tutupModalPemasukanNonKas() { 
       document.getElementById('modal-pemasukan-nonkas').classList.add('hidden');
       document.getElementById('inc-nominal').value = '';
       document.getElementById('inc-keterangan').value = '';
@@ -795,16 +780,10 @@
       }
 
       showLoading("Menyimpan pemasukan...");
-
       fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          action: "tambahPemasukanNonKas",
-          kategori: kategori,
-          nominal: Number(nominal),
-          keterangan: keterangan
-        })
+        body: JSON.stringify({ action: "tambahPemasukanNonKas", kategori: kategori, nominal: Number(nominal), keterangan: keterangan })
       })
       .then(res => res.json())
       .then(data => {
@@ -813,22 +792,13 @@
           showToast('success', data.message);
           tutupModalPemasukanNonKas();
           muatDataKasKeuangan();
-        } else {
-          showToast('error', data.message);
-        }
+        } else { showToast('error', data.message); }
       })
-      .catch(() => {
-        Swal.close();
-        showToast('error', 'Gagal terhubung ke server');
-      });
+      .catch(() => { Swal.close(); showToast('error', 'Gagal terhubung ke server'); });
     }
 
-    // MODAL PENGELUARAN KAS
-    function bukaModalPengeluaran() {
-      document.getElementById('modal-pengeluaran').classList.remove('hidden');
-    }
-
-    function tutupModalPengeluaran() {
+    function bukaModalPengeluaran() { document.getElementById('modal-pengeluaran').classList.remove('hidden'); }
+    function tutupModalPengeluaran() { 
       document.getElementById('modal-pengeluaran').classList.add('hidden');
       document.getElementById('keluar-nominal').value = '';
       document.getElementById('keluar-keterangan').value = '';
@@ -844,15 +814,10 @@
       }
 
       showLoading("Mengajukan pengeluaran...");
-
       fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          action: "tambahPengeluaran",
-          nominal: Number(nominal),
-          keterangan: keterangan
-        })
+        body: JSON.stringify({ action: "tambahPengeluaran", nominal: Number(nominal), keterangan: keterangan })
       })
       .then(res => res.json())
       .then(data => {
@@ -861,20 +826,13 @@
           showToast('success', data.message);
           tutupModalPengeluaran();
           muatDataKasKeuangan();
-        } else {
-          showToast('error', data.message);
-        }
+        } else { showToast('error', data.message); }
       })
-      .catch(() => {
-        Swal.close();
-        showToast('error', 'Gagal terhubung ke server');
-      });
+      .catch(() => { Swal.close(); showToast('error', 'Gagal terhubung ke server'); });
     }
 
-    // MENU APPROVAL PENGELUARAN KHUSUS ADMIN/RT
     function bukaModalApprovalPengeluaran() {
       showLoading("Memuat data pengeluaran pending...");
-
       fetch(API_URL + "?action=getPengeluaranPending")
         .then(res => res.json())
         .then(res => {
@@ -896,41 +854,26 @@
                     <p class="text-sm font-extrabold text-red-600 mt-0.5">${formatRupiah(item.nominal)}</p>
                   </div>
                   <div class="flex gap-2 pt-2 border-t border-gray-200">
-                    <button onclick="prosesApproval('${item.id_pengeluaran}', 'Disetujui')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 rounded-lg">Setujui</button>
-                    <button onclick="prosesApproval('${item.id_pengeluaran}', 'Ditolak')" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold text-xs py-2 rounded-lg">Tolak</button>
+                    <button onclick="prosesApproval('${item.id_pengeluaran}', 'Disetujui')" class="flex-1 bg-emerald-600 text-white font-bold text-xs py-2 rounded-lg">Setujui</button>
+                    <button onclick="prosesApproval('${item.id_pengeluaran}', 'Ditolak')" class="flex-1 bg-red-600 text-white font-bold text-xs py-2 rounded-lg">Tolak</button>
                   </div>
                 </div>
               `;
             });
             htmlContent += '</div>';
 
-            Swal.fire({
-              title: '<strong>Persetujuan Pengeluaran</strong>',
-              html: htmlContent,
-              showConfirmButton: false,
-              showCloseButton: true
-            });
-          } else {
-            showToast('error', res.message);
-          }
+            Swal.fire({ title: '<strong>Persetujuan Pengeluaran</strong>', html: htmlContent, showConfirmButton: false, showCloseButton: true });
+          } else { showToast('error', res.message); }
         })
-        .catch(() => {
-          Swal.close();
-          showToast('error', 'Gagal memuat data persetujuan');
-        });
+        .catch(() => { Swal.close(); showToast('error', 'Gagal memuat data persetujuan'); });
     }
 
     function prosesApproval(idPengeluaran, status) {
       showLoading("Memproses " + status.toLowerCase() + "...");
-
       fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          action: "updateApprovalPengeluaran",
-          id_pengeluaran: idPengeluaran,
-          status: status
-        })
+        body: JSON.stringify({ action: "updateApprovalPengeluaran", id_pengeluaran: idPengeluaran, status: status })
       })
       .then(res => res.json())
       .then(data => {
@@ -939,14 +882,9 @@
           showToast('success', data.message);
           muatDataKasKeuangan();
           Swal.close();
-        } else {
-          showToast('error', data.message);
-        }
+        } else { showToast('error', data.message); }
       })
-      .catch(() => {
-        Swal.close();
-        showToast('error', 'Gagal memproses approval');
-      });
+      .catch(() => { Swal.close(); showToast('error', 'Gagal memproses approval'); });
     }
 
     // PENGUMUMAN
@@ -957,7 +895,6 @@
           if (res.status === 'success') {
             const containerHome = document.getElementById('list-pengumuman-home');
             const containerFull = document.getElementById('list-pengumuman-full');
-            
             if (containerHome) containerHome.innerHTML = '';
             if (containerFull) containerFull.innerHTML = '';
 
@@ -973,12 +910,8 @@
               if (currentUser && currentUser.role && ['admin', 'rt'].includes(currentUser.role.toLowerCase())) {
                 actionButtons = `
                   <div class="flex gap-3 mt-3 pt-2 border-t border-gray-100 text-xs">
-                    <button onclick="openModalEdit('${item.id_info}', \`${item.judul}\`, \`${item.isi}\`, '${item.kategori}')" class="text-blue-600 font-semibold hover:underline flex items-center gap-1">
-                      ✏️ Edit
-                    </button>
-                    <button onclick="hapusPengumuman('${item.id_info}')" class="text-red-600 font-semibold hover:underline flex items-center gap-1">
-                      🗑️ Hapus
-                    </button>
+                    <button onclick="openModalEdit('${item.id_info}', \`${item.judul}\`, \`${item.isi}\`, '${item.kategori}')" class="text-blue-600 font-semibold hover:underline">✏️ Edit</button>
+                    <button onclick="hapusPengumuman('${item.id_info}')" class="text-red-600 font-semibold hover:underline">🗑️ Hapus</button>
                   </div>
                 `;
               }
@@ -1008,22 +941,13 @@
       const judul = document.getElementById("adm-judul").value;
       const isi = document.getElementById("adm-isi").value;
 
-      if (!judul || !isi) {
-        showToast('warning', 'Lengkapi Judul dan Isi!');
-        return;
-      }
+      if (!judul || !isi) { showToast('warning', 'Lengkapi Judul dan Isi!'); return; }
 
       showLoading("Menerbitkan pengumuman...");
-
       fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          action: "tambahPengumuman",
-          kategori: kategori,
-          judul: judul,
-          isi: isi
-        })
+        body: JSON.stringify({ action: "tambahPengumuman", kategori: kategori, judul: judul, isi: isi })
       })
       .then(res => res.json())
       .then(data => {
@@ -1032,14 +956,9 @@
           showToast('success', data.message);
           tutupModalPengumuman();
           loadPengumuman();
-        } else {
-          showToast('error', data.message);
-        }
+        } else { showToast('error', data.message); }
       })
-      .catch(err => {
-        Swal.close();
-        showToast('error', 'Gagal menerbitkan pengumuman');
-      });
+      .catch(() => { Swal.close(); showToast('error', 'Gagal menerbitkan pengumuman'); });
     }
 
     function openModalEdit(idInfo, judul, isi, kategori) {
@@ -1049,10 +968,7 @@
       document.getElementById("edit-kategori").value = kategori;
       document.getElementById("modal-edit-pengumuman").classList.remove("hidden");
     }
-
-    function tutupModalEdit() {
-      document.getElementById("modal-edit-pengumuman").classList.add("hidden");
-    }
+    function tutupModalEdit() { document.getElementById("modal-edit-pengumuman").classList.add("hidden"); }
 
     function prosesSimpanEdit() {
       const idInfo = document.getElementById("edit-id-info").value;
@@ -1061,17 +977,10 @@
       const kategori = document.getElementById("edit-kategori").value;
 
       showLoading("Menyimpan perubahan...");
-
       fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'editPengumuman',
-          id_info: idInfo,
-          judul: judul,
-          isi: isi,
-          kategori: kategori
-        })
+        body: JSON.stringify({ action: 'editPengumuman', id_info: idInfo, judul: judul, isi: isi, kategori: kategori })
       })
       .then(res => res.json())
       .then(res => {
@@ -1080,53 +989,31 @@
           showToast('success', res.message);
           tutupModalEdit();
           loadPengumuman();
-        } else {
-          showToast('error', res.message);
-        }
+        } else { showToast('error', res.message); }
       })
-      .catch(err => {
-        Swal.close();
-        showToast('error', 'Error: ' + err.message);
-      });
+      .catch(err => { Swal.close(); showToast('error', 'Error: ' + err.message); });
     }
 
     function hapusPengumuman(idInfo) {
       Swal.fire({
-        title: 'Hapus Pengumuman?',
-        text: "Pengumuman yang dihapus tidak bisa dikembalikan!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#6b7280',
-        confirmButtonText: 'Ya, Hapus!',
-        cancelButtonText: 'Batal',
-        reverseButtons: true
+        title: 'Hapus Pengumuman?', text: "Pengumuman yang dihapus tidak bisa dikembalikan!", icon: 'warning',
+        showCancelButton: true, confirmButtonColor: '#d33', cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Ya, Hapus!', cancelButtonText: 'Batal', reverseButtons: true
       }).then((result) => {
         if (result.isConfirmed) {
           showLoading("Menghapus pengumuman...");
-
           fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-              action: 'hapusPengumuman',
-              id_info: idInfo
-            })
+            body: JSON.stringify({ action: 'hapusPengumuman', id_info: idInfo })
           })
           .then(res => res.json())
           .then(res => {
             Swal.close();
-            if (res.status === 'success') {
-              showToast('success', res.message);
-              loadPengumuman();
-            } else {
-              showToast('error', res.message);
-            }
+            if (res.status === 'success') { showToast('success', res.message); loadPengumuman(); }
+            else { showToast('error', res.message); }
           })
-          .catch(err => {
-            Swal.close();
-            showToast('error', 'Gagal menghapus data');
-          });
+          .catch(() => { Swal.close(); showToast('error', 'Gagal menghapus data'); });
         }
       });
     }
@@ -1136,13 +1023,9 @@
       const judul = document.getElementById("lap-judul").value;
       const deskripsi = document.getElementById("lap-deskripsi").value;
 
-      if (!judul || !deskripsi) {
-        showToast('warning', 'Lengkapi judul dan deskripsi!');
-        return;
-      }
+      if (!judul || !deskripsi) { showToast('warning', 'Lengkapi judul dan deskripsi!'); return; }
 
       showLoading("Mengirim laporan...");
-
       fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -1162,10 +1045,7 @@
         document.getElementById("lap-deskripsi").value = "";
         loadLaporanAduan();
       })
-      .catch(err => {
-        Swal.close();
-        showToast('error', 'Gagal mengirim laporan');
-      });
+      .catch(() => { Swal.close(); showToast('error', 'Gagal mengirim laporan'); });
     }
 
     function loadLaporanAduan() {
@@ -1175,9 +1055,7 @@
       var userRole = (currentUser && currentUser.role ? currentUser.role : 'warga').toString().toLowerCase();
       var userNoRumah = (currentUser && currentUser.no_rumah ? currentUser.no_rumah : '').toString().trim();
 
-      var url = API_URL + "?action=getLaporan&role=" + encodeURIComponent(userRole) + "&no_rumah=" + encodeURIComponent(userNoRumah);
-
-      fetch(url)
+      fetch(API_URL + "?action=getLaporan&role=" + encodeURIComponent(userRole) + "&no_rumah=" + encodeURIComponent(userNoRumah))
         .then(res => res.json())
         .then(res => {
           if (!container) return;
@@ -1185,39 +1063,11 @@
 
           if (res.status === 'success' && res.data && res.data.length > 0) {
             res.data.forEach(item => {
-              var statusBadge = '';
               var st = String(item.status || 'Pending').toLowerCase();
-              if (st === 'selesai') {
-                statusBadge = '<span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">Selesai</span>';
-              } else if (st === 'diproses') {
-                statusBadge = '<span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">Diproses</span>';
-              } else {
-                statusBadge = '<span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">Pending</span>';
-              }
+              var statusBadge = st === 'selesai' ? '<span class="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">Selesai</span>' : (st === 'diproses' ? '<span class="text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">Diproses</span>' : '<span class="text-[10px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">Pending</span>');
 
-              var feedbackHtml = '';
-              if (item.feedback) {
-                feedbackHtml = `
-                  <div class="mt-2.5 p-2.5 bg-emerald-50 rounded-lg border border-emerald-100 text-xs text-left">
-                    <p class="font-bold text-emerald-800 flex items-center gap-1">
-                      <i class="fa-solid fa-user-shield"></i> Tanggapan Pengurus:
-                    </p>
-                    <p class="text-emerald-700 mt-0.5">${item.feedback}</p>
-                  </div>
-                `;
-              }
-
-              var adminAction = '';
-              if (['admin', 'rt'].includes(userRole)) {
-                adminAction = `
-                  <div class="mt-3 pt-2 border-t border-gray-100 flex justify-between items-center text-xs">
-                    <span class="text-gray-400 font-semibold">Tindak Lanjut:</span>
-                    <button onclick="bukaModalFollowUp('${item.id_laporan}', '${item.status || 'Pending'}', \`${item.feedback || ''}\`)" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1">
-                      <i class="fa-solid fa-pen-to-square"></i> Respond / Status
-                    </button>
-                  </div>
-                `;
-              }
+              var feedbackHtml = item.feedback ? `<div class="mt-2.5 p-2.5 bg-emerald-50 rounded-lg border border-emerald-100 text-xs text-left"><p class="font-bold text-emerald-800"><i class="fa-solid fa-user-shield"></i> Tanggapan Pengurus:</p><p class="text-emerald-700 mt-0.5">${item.feedback}</p></div>` : '';
+              var adminAction = ['admin', 'rt'].includes(userRole) ? `<div class="mt-3 pt-2 border-t border-gray-100 flex justify-between items-center text-xs"><span class="text-gray-400 font-semibold">Tindak Lanjut:</span><button onclick="bukaModalFollowUp('${item.id_laporan}', '${item.status || 'Pending'}', \`${item.feedback || ''}\`)" class="bg-emerald-600 text-white font-bold px-3 py-1.5 rounded-lg">Respond / Status</button></div>` : '';
 
               container.innerHTML += `
                 <div class="bg-white p-3.5 rounded-xl border border-gray-100 shadow-sm text-left mb-3">
@@ -1233,16 +1083,11 @@
                 </div>
               `;
             });
-          } else if (res.status === 'error') {
-            container.innerHTML = '<p class="text-xs text-red-500 text-center py-4">Error: ' + res.message + '</p>';
           } else {
             container.innerHTML = '<p class="text-xs text-gray-400 italic text-center py-4">Belum ada riwayat laporan.</p>';
           }
         })
-        .catch(err => {
-          console.error(err);
-          if (container) container.innerHTML = '<p class="text-xs text-red-500 text-center py-4">Gagal memuat daftar laporan.</p>';
-        });
+        .catch(() => { if (container) container.innerHTML = '<p class="text-xs text-red-500 text-center py-4">Gagal memuat daftar laporan.</p>'; });
     }
 
     function bukaModalFollowUp(idLaporan, currentStatus, currentFeedback) {
@@ -1259,53 +1104,28 @@
               </select>
             </div>
             <div>
-              <label class="text-xs font-semibold text-gray-600">Feedback / Pesan Balasan ke Warga</label>
-              <textarea id="swal-feedback" rows="3" placeholder="Contoh: Laporan sudah ditindaklanjuti oleh petugas." class="w-full border rounded-lg p-2 text-sm mt-1">${currentFeedback}</textarea>
+              <label class="text-xs font-semibold text-gray-600">Feedback / Pesan Balasan</label>
+              <textarea id="swal-feedback" rows="3" class="w-full border rounded-lg p-2 text-sm mt-1">${currentFeedback}</textarea>
             </div>
           </div>
         `,
-        showCancelButton: true,
-        confirmButtonText: 'Simpan',
-        cancelButtonText: 'Batal',
-        confirmButtonColor: '#059669',
-        preConfirm: () => {
-          return {
-            status: document.getElementById('swal-status').value,
-            feedback: document.getElementById('swal-feedback').value
-          };
-        }
+        showCancelButton: true, confirmButtonText: 'Simpan', cancelButtonText: 'Batal', confirmButtonColor: '#059669',
+        preConfirm: () => ({ status: document.getElementById('swal-status').value, feedback: document.getElementById('swal-feedback').value })
       }).then((result) => {
         if (result.isConfirmed) {
           showLoading("Menyimpan balasan...");
           fetch(API_URL, {
             method: "POST",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({
-              action: "updateStatusLaporan",
-              id_laporan: idLaporan,
-              status: result.value.status,
-              feedback: result.value.feedback
-            })
+            body: JSON.stringify({ action: "updateStatusLaporan", id_laporan: idLaporan, ...result.value })
           })
           .then(res => res.json())
           .then(res => {
             Swal.close();
-            if (res.status === 'success') {
-              showToast('success', res.message || 'Status berhasil diperbarui!');
-              setTimeout(function() {
-                loadLaporanAduan();
-              }, 500);
-            } else {
-              showToast('error', res.message || 'Gagal memperbarui status');
-            }
+            if (res.status === 'success') { showToast('success', 'Status berhasil diperbarui!'); loadLaporanAduan(); }
+            else { showToast('error', res.message); }
           })
-          .catch(err => {
-            Swal.close();
-            showToast('success', 'Status & Feedback berhasil disimpan!');
-            setTimeout(function() {
-              loadLaporanAduan();
-            }, 500);
-          });
+          .catch(() => { Swal.close(); showToast('error', 'Gagal memperbarui status'); });
         }
       });
     }
@@ -1327,437 +1147,163 @@
       ];
 
       var html = '<div class="space-y-3 p-1">';
-      
       dataPengurus.forEach(function(item) {
         var noWa = String(item.wa || '').replace(/[^0-9]/g, '');
         if (noWa.startsWith("0")) noWa = "62" + noWa.slice(1);
-
-        html += 
-          '<div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">' +
-            '<div>' +
-              '<p class="text-xs text-emerald-600 font-bold">' + item.jabatan + '</p>' +
-              '<p class="text-sm font-bold text-gray-800">' + (item.nama || '-') + '</p>' +
-            '</div>' +
-            '<a href="https://wa.me/' + noWa + '" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white p-2.5 rounded-lg flex items-center justify-center">' +
-              '<i class="fa-brands fa-whatsapp text-lg"></i>' +
-            '</a>' +
-          '</div>';
+        html += `<div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100"><div><p class="text-xs text-emerald-600 font-bold">${item.jabatan}</p><p class="text-sm font-bold text-gray-800">${item.nama}</p></div><a href="https://wa.me/${noWa}" target="_blank" class="bg-emerald-600 text-white p-2.5 rounded-lg"><i class="fa-brands fa-whatsapp text-lg"></i></a></div>`;
       });
-
       html += '</div>';
 
-      var container = document.getElementById("modal-kontak-body");
-      if (container) {
-        container.innerHTML = html;
-      }
-
-      var modal = document.getElementById("modal-kontak");
-      if (modal) {
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
-      }
+      document.getElementById("modal-kontak-body").innerHTML = html;
+      document.getElementById("modal-kontak").classList.remove("hidden");
+      document.getElementById("modal-kontak").classList.add("flex");
     }
 
     function tutupModalKontak() {
-      var modal = document.getElementById("modal-kontak");
-      if (modal) {
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-      }
+      document.getElementById("modal-kontak").classList.add("hidden");
+      document.getElementById("modal-kontak").classList.remove("flex");
     }
 
-    // KAS WARGA (MEMBACA DARI RESUME KAS)
+    // LOAD KAS & SAMPAH WARGA
     function loadDataKasWarga() {
       if (!currentUser || !currentUser.no_rumah) return;
-
-      var urlEndpoint = (typeof API_URL !== 'undefined' ? API_URL : SCRIPT_URL);
-
-      fetch(urlEndpoint + "?action=getKasWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
-        .then(res => {
-          if (!res.ok) {
-            throw new Error("HTTP Status " + res.status);
-          }
-          return res.json();
-        })
+      fetch(API_URL + "?action=getKasWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
+        .then(res => res.json())
         .then(res => {
           if (res.status === 'success') {
             dataKasUser = res.data || [];
-            
             var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
             var totalTunggakan = 0;
-            
             tunggakan.forEach(k => totalTunggakan += Number(k.nominal || 20000));
 
-            var cardKasContainer = document.getElementById("status-kas-container");
-            if (!cardKasContainer) return;
+            var container = document.getElementById("status-kas-container");
+            if (!container) return;
 
             if (tunggakan.length > 0) {
-              cardKasContainer.innerHTML = 
-                '<div>' +
-                  '<p class="text-xs text-gray-500 font-semibold">Tunggakan Kas (' + tunggakan.length + ' Bulan)</p>' +
-                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold">' +
-                    '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ' + formatRupiah(totalTunggakan) +
-                  '</span>' +
-                '</div>' +
-                '<button onclick="bukaModalRincianKas()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
-                  'Bayar Kas' +
-                '</button>';
+              container.innerHTML = `<div><p class="text-xs text-gray-500 font-semibold">Tunggakan Kas (${tunggakan.length} Bulan)</p><span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ${formatRupiah(totalTunggakan)}</span></div><button onclick="bukaModalRincianKas()" class="bg-red-600 text-white text-xs px-3 py-2 rounded-lg font-bold">Bayar Kas</button>`;
             } else {
-              cardKasContainer.innerHTML = 
-                '<div>' +
-                  '<p class="text-xs text-gray-500 font-semibold">Status Iuran Kas</p>' +
-                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">' +
-                    '<i class="fa-solid fa-circle-check mr-1"></i> Lunas' +
-                  '</span>' +
-                '</div>' +
-                '<button onclick="showToast(\'info\', \'Iuran Kas Anda Sudah Lunas\')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
-                  'Cek Kas' +
-                '</button>';
+              container.innerHTML = `<div><p class="text-xs text-gray-500 font-semibold">Status Iuran Kas</p><span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Lunas</span></div><button onclick="showToast('info', 'Iuran Kas Anda Sudah Lunas')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">Cek Kas</button>`;
             }
-          } else {
-            console.warn("Respon Kas Gagal:", res.message);
           }
         })
-        .catch(err => {
-          console.error("Error load kas:", err);
-          var cardKasContainer = document.getElementById("status-kas-container");
-          if (cardKasContainer) {
-            cardKasContainer.innerHTML = '<p class="text-xs text-red-500 font-semibold">Gagal memuat data kas</p>';
-          }
-        });
+        .catch(err => console.error("Error load kas:", err));
     }
 
     function loadDataSampahWarga() {
       if (!currentUser || !currentUser.no_rumah) return;
-
-      var urlEndpoint = (typeof API_URL !== 'undefined' ? API_URL : SCRIPT_URL);
-
-      fetch(urlEndpoint + "?action=getSampahWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
+      fetch(API_URL + "?action=getSampahWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
         .then(res => res.json())
         .then(res => {
           if (res.status === 'success') {
             dataSampahUser = res.data || [];
-            
             var tunggakan = dataSampahUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
             var totalTunggakan = 0;
             tunggakan.forEach(k => totalTunggakan += Number(k.nominal || 20000));
 
-            var cardSampahContainer = document.getElementById("status-sampah-container");
-            if (!cardSampahContainer) return;
+            var container = document.getElementById("status-sampah-container");
+            if (!container) return;
 
             if (tunggakan.length > 0) {
-              cardSampahContainer.innerHTML = 
-                '<div>' +
-                  '<p class="text-xs text-gray-500 font-semibold">Tunggakan Sampah BUMDes (' + tunggakan.length + ' Bulan)</p>' +
-                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold">' +
-                    '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ' + formatRupiah(totalTunggakan) +
-                  '</span>' +
-                '</div>' +
-                '<button onclick="bukaModalRincianSampah()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
-                  'Info Sampah' +
-                '</button>';
+              container.innerHTML = `<div><p class="text-xs text-gray-500 font-semibold">Tunggakan Sampah BUMDes (${tunggakan.length} Bulan)</p><span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> ${formatRupiah(totalTunggakan)}</span></div><button onclick="bukaModalRincianSampah()" class="bg-blue-600 text-white text-xs px-3 py-2 rounded-lg font-bold">Info Sampah</button>`;
             } else {
-              cardSampahContainer.innerHTML = 
-                '<div>' +
-                  '<p class="text-xs text-gray-500 font-semibold">Iuran Sampah BUMDes</p>' +
-                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">' +
-                    '<i class="fa-solid fa-circle-check mr-1"></i> Lunas' +
-                  '</span>' +
-                '</div>' +
-                '<button onclick="bukaModalRincianSampah()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
-                  'Cek Struk' +
-                '</button>';
+              container.innerHTML = `<div><p class="text-xs text-gray-500 font-semibold">Iuran Sampah BUMDes</p><span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Lunas</span></div><button onclick="bukaModalRincianSampah()" class="bg-blue-600 text-white text-xs px-3 py-2 rounded-lg font-bold">Cek Struk</button>`;
             }
           }
         })
-        .catch(err => {
-          console.error("Error load sampah:", err);
-        });
-    }
-        .catch(err => {
-          console.error("Error load sampah:", err);
-          var cardSampahContainer = document.getElementById("status-sampah-container");
-          if (cardSampahContainer) {
-            cardSampahContainer.innerHTML = '<p class="text-xs text-red-500 font-semibold">Gagal memuat data sampah</p>';
-          }
-        });
+        .catch(err => console.error("Error load sampah:", err));
     }
 
     function bukaModalRincianKas() {
       var tunggakan = dataKasUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
-      
-      if (tunggakan.length === 0) {
-        showToast('info', 'Tidak ada tunggakan kas');
-        return;
-      }
+      if (tunggakan.length === 0) { showToast('info', 'Tidak ada tunggakan kas'); return; }
 
-      var htmlItems = tunggakan.map(function(k) {
-        var labelBulanTahun = formatBulanTahun(k.bulan_tahun);
-        
-        return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2 text-sm">' +
-          '<div class="text-left">' +
-            '<p class="font-bold text-gray-800">Iuran Bulan ' + labelBulanTahun + '</p>' +
-            '<p class="text-xs text-red-600 font-semibold">Belum Dibayar</p>' +
-          '</div>' +
-          '<span class="font-bold text-gray-700">' + formatRupiah(k.nominal || 0) + '</span>' +
-        '</div>';
-      }).join('');
-
+      var htmlItems = tunggakan.map(k => `<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2 text-sm"><div class="text-left"><p class="font-bold text-gray-800">Iuran Bulan ${formatBulanTahun(k.bulan_tahun)}</p><p class="text-xs text-red-600 font-semibold">Belum Dibayar</p></div><span class="font-bold text-gray-700">${formatRupiah(k.nominal || 0)}</span></div>`).join('');
       var total = tunggakan.reduce((sum, item) => sum + Number(item.nominal || 0), 0);
 
       Swal.fire({
-        title: '<strong>Rincian Tunggakan Kas</strong>',
-        icon: 'warning',
-        html: '<div class="pt-2 text-left">' +
-            htmlItems +
-            '<div class="mt-3 p-3 bg-red-50 rounded-lg border border-red-200 flex justify-between items-center font-bold text-sm text-red-800">' +
-              '<span>Total Tagihan:</span>' +
-              '<span>' + formatRupiah(total) + '</span>' +
-            '</div>' +
-          '</div>',
-        showCloseButton: true,
-        confirmButtonText: '<i class="fa-brands fa-whatsapp mr-1"></i> Konfirmasi via Bendahara',
-        confirmButtonColor: '#059669'
+        title: '<strong>Rincian Tunggakan Kas</strong>', icon: 'warning',
+        html: `<div class="pt-2 text-left">${htmlItems}<div class="mt-3 p-3 bg-red-50 rounded-lg border border-red-200 flex justify-between items-center font-bold text-sm text-red-800"><span>Total Tagihan:</span><span>${formatRupiah(total)}</span></div></div>`,
+        showCloseButton: true, confirmButtonText: '<i class="fa-brands fa-whatsapp mr-1"></i> Konfirmasi via Bendahara', confirmButtonColor: '#059669'
       }).then((result) => {
         if (result.isConfirmed) {
-          var pesanWA = "Halo " + KONTAK_PENGURUS.bendahara.nama + ", saya dari Blok " + currentUser.no_rumah + " ingin mengonfirmasi pembayaran kas tunggakan sebesar " + formatRupiah(total);
-          window.open("https://wa.me/" + KONTAK_PENGURUS.bendahara.wa + "?text=" + encodeURIComponent(pesanWA), "_blank");
+          window.open("https://wa.me/" + KONTAK_PENGURUS.bendahara.wa + "?text=" + encodeURIComponent("Halo " + KONTAK_PENGURUS.bendahara.nama + ", saya dari Blok " + currentUser.no_rumah + " ingin mengonfirmasi pembayaran kas tunggakan sebesar " + formatRupiah(total)), "_blank");
         }
       });
     }
 
     function bukaModalRincianSampah() {
-      if (!dataSampahUser || dataSampahUser.length === 0) {
-        showToast('info', 'Belum ada data iuran sampah');
-        return;
-      }
+      if (!dataSampahUser || dataSampahUser.length === 0) { showToast('info', 'Belum ada data iuran sampah'); return; }
 
-      var htmlItems = dataSampahUser.map(function(k) {
-        var labelBulanTahun = formatBulanTahun(k.bulan_tahun);
+      var htmlItems = dataSampahUser.map(k => {
         var isLunas = String(k.status).toLowerCase() === 'lunas';
-        
-        var badgeStatus = isLunas 
-          ? '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full">Lunas</span>' 
-          : '<span class="px-2 py-0.5 bg-red-100 text-red-700 text-[10px] font-bold rounded-full">Belum Bayar</span>';
-
-        var aksiBtn = isLunas 
-          ? '<button onclick="tampilkanStrukPerBulan(\'' + k.bulan_tahun + '\', \'' + (k.nominal || 20000) + '\')" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] px-2.5 py-1 rounded font-bold">Struk</button>' 
-          : '<span class="text-xs text-gray-400 font-bold">' + formatRupiah(k.nominal || 20000) + '</span>';
-
-        return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2 text-xs">' +
-          '<div class="text-left">' +
-            '<p class="font-bold text-gray-800">Bulan ' + labelBulanTahun + '</p>' +
-            '<div class="mt-0.5">' + badgeStatus + '</div>' +
-          '</div>' +
-          '<div>' + aksiBtn + '</div>' +
-        '</div>';
+        return `<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2 text-xs"><div class="text-left"><p class="font-bold text-gray-800">Bulan ${formatBulanTahun(k.bulan_tahun)}</p><div class="mt-0.5">${isLunas ? '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full">Lunas</span>' : '<span class="px-2 py-0.5 bg-red-100 text-red-700 text-[10px] font-bold rounded-full">Belum Bayar</span>'}</div></div><div>${isLunas ? `<button onclick="tampilkanStrukPerBulan('${k.bulan_tahun}', '${k.nominal || 20000}')" class="bg-blue-600 text-white text-[10px] px-2.5 py-1 rounded font-bold">Struk</button>` : `<span class="text-xs text-gray-400 font-bold">${formatRupiah(k.nominal || 20000)}</span>`}</div></div>`;
       }).join('');
 
-      Swal.fire({
-        title: '<strong>Rincian & Struk Iuran Sampah</strong>',
-        html: '<div class="pt-2 text-left max-h-72 overflow-y-auto">' + htmlItems + '</div>',
-        confirmButtonText: 'Tutup',
-        confirmButtonColor: '#2563eb'
-      });
+      Swal.fire({ title: '<strong>Rincian & Struk Iuran Sampah</strong>', html: `<div class="pt-2 text-left max-h-72 overflow-y-auto">${htmlItems}</div>`, confirmButtonText: 'Tutup', confirmButtonColor: '#2563eb' });
     }
 
     function tampilkanStrukPerBulan(bulanTahun, nominal) {
-      var labelBulan = formatBulanTahun(bulanTahun);
       Swal.fire({
         title: '<strong>🧾 Bukti Lunas Iuran Sampah</strong>',
-        html: `
-          <div class="text-left bg-gray-50 p-4 rounded-xl border space-y-2 text-xs">
-            <div class="flex justify-between border-b pb-1">
-              <span class="text-gray-500">Pengelola:</span>
-              <span class="font-bold text-blue-600">BUMDes D'Mutiara Sodong</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-500">Periode Bulan:</span>
-              <span class="font-bold text-emerald-600">${labelBulan}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-500">No Rumah:</span>
-              <span class="font-bold">Blok ${currentUser.no_rumah}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-500">Nama Warga:</span>
-              <span class="font-bold">${currentUser.nama}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-500">Nominal:</span>
-              <span class="font-bold">${formatRupiah(nominal)}</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-500">Status:</span>
-              <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold rounded-full">LUNAS</span>
-            </div>
-          </div>
-        `,
-        confirmButtonText: 'Kembali',
-        confirmButtonColor: '#2563eb'
+        html: `<div class="text-left bg-gray-50 p-4 rounded-xl border space-y-2 text-xs"><div class="flex justify-between border-b pb-1"><span class="text-gray-500">Pengelola:</span><span class="font-bold text-blue-600">BUMDes D'Mutiara Sodong</span></div><div class="flex justify-between"><span class="text-gray-500">Periode:</span><span class="font-bold text-emerald-600">${formatBulanTahun(bulanTahun)}</span></div><div class="flex justify-between"><span class="text-gray-500">No Rumah:</span><span class="font-bold">Blok ${currentUser.no_rumah}</span></div><div class="flex justify-between"><span class="text-gray-500">Nama Warga:</span><span class="font-bold">${currentUser.nama}</span></div><div class="flex justify-between"><span class="text-gray-500">Nominal:</span><span class="font-bold">${formatRupiah(nominal)}</span></div><div class="flex justify-between"><span class="text-gray-500">Status:</span><span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold rounded-full">LUNAS</span></div></div>`,
+        confirmButtonText: 'Kembali', confirmButtonColor: '#2563eb'
       });
     }
 
-    // FORM INPUT KAS OLEH BENDAHARA
+    // FORM INPUT KAS & SAMPAH
     function bukaModalInputKas() {
-      const tglSekarang = new Date();
-      const tahunIni = tglSekarang.getFullYear();
-      const bulanIni = String(tglSekarang.getMonth() + 1).padStart(2, '0');
-      const defaultBulan = `${tahunIni}-${bulanIni}`;
-
+      const tgl = new Date();
       Swal.fire({
         title: '<strong>Konfirmasi Pembayaran Kas</strong>',
-        html: `
-          <div class="text-left space-y-3 pt-2">
-            <div>
-              <label class="text-xs font-semibold text-gray-600">Nomor / Blok Rumah (Contoh: B33)</label>
-              <input type="text" id="swal-input-norumah" placeholder="Masukkan No Rumah" class="w-full border rounded-lg p-2.5 text-sm mt-1 uppercase">
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-gray-600">Pilih Bulan & Tahun Kas</label>
-              <input type="month" id="swal-input-bulantahun" value="${defaultBulan}" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white">
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-gray-600">Nominal (Rp)</label>
-              <input type="number" id="swal-input-nominal" placeholder="Contoh: 20000" value="20000" class="w-full border rounded-lg p-2.5 text-sm mt-1">
-            </div>
-          </div>
-        `,
-        showCancelButton: true,
-        confirmButtonText: 'Konfirmasi Lunas',
-        cancelButtonText: 'Batal',
-        confirmButtonColor: '#059669',
-        preConfirm: () => {
-          return {
-            no_rumah: document.getElementById('swal-input-norumah').value.trim(),
-            bulan_tahun: document.getElementById('swal-input-bulantahun').value.trim(),
-            nominal: document.getElementById('swal-input-nominal').value.trim(),
-            status: "Lunas"
-          };
-        }
+        html: `<div class="text-left space-y-3 pt-2"><div><label class="text-xs font-semibold text-gray-600">Nomor Rumah (B33)</label><input type="text" id="swal-input-norumah" class="w-full border rounded-lg p-2.5 text-sm mt-1 uppercase"></div><div><label class="text-xs font-semibold text-gray-600">Bulan & Tahun</label><input type="month" id="swal-input-bulantahun" value="${tgl.getFullYear()}-${String(tgl.getMonth()+1).padStart(2,'0')}" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white"></div><div><label class="text-xs font-semibold text-gray-600">Nominal (Rp)</label><input type="number" id="swal-input-nominal" value="20000" class="w-full border rounded-lg p-2.5 text-sm mt-1"></div></div>`,
+        showCancelButton: true, confirmButtonText: 'Konfirmasi Lunas', cancelButtonText: 'Batal', confirmButtonColor: '#059669',
+        preConfirm: () => ({ no_rumah: document.getElementById('swal-input-norumah').value.trim(), bulan_tahun: document.getElementById('swal-input-bulantahun').value.trim(), nominal: document.getElementById('swal-input-nominal').value.trim(), status: "Lunas" })
       }).then((result) => {
         if (result.isConfirmed) {
-          const dataInput = result.value;
-          if (!dataInput.no_rumah || !dataInput.bulan_tahun || !dataInput.nominal) {
-            showToast('warning', 'Semua kolom wajib diisi!');
-            return;
-          }
-
           showLoading("Menyimpan konfirmasi kas...");
-
-          fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({
-              action: "inputKasWarga",
-              ...dataInput
-            })
-          })
+          fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "inputKasWarga", ...result.value }) })
           .then(res => res.json())
           .then(res => {
             Swal.close();
-            if (res.status === 'success') {
-              showToast('success', 'Pembayaran kas berhasil dikonfirmasi Lunas!');
-              muatDataKasKeuangan();
-            } else {
-              showToast('error', res.message);
-            }
+            if (res.status === 'success') { showToast('success', 'Berhasil dikonfirmasi Lunas!'); muatDataKasKeuangan(); }
+            else { showToast('error', res.message); }
           })
-          .catch(err => {
-            Swal.close();
-            showToast('error', 'Gagal terhubung ke server');
-          });
+          .catch(() => { Swal.close(); showToast('error', 'Gagal terhubung ke server'); });
         }
       });
     }
 
-    // FORM INPUT SAMPAH OLEH BUMDES (MULTI-BULAN)
     function bukaModalInputSampah(presetRumah = '') {
-      const tglSekarang = new Date();
-      const tahunIni = tglSekarang.getFullYear();
-      const bulanIni = String(tglSekarang.getMonth() + 1).padStart(2, '0');
-      const defaultBulan = `${tahunIni}-${bulanIni}`;
-
+      const tgl = new Date();
       Swal.fire({
-        title: '<strong>Konfirmasi Iuran Sampah (BUMDes)</strong>',
-        html: `
-          <div class="text-left space-y-3 pt-2">
-            <div>
-              <label class="text-xs font-semibold text-gray-600">Nomor / Blok Rumah (Contoh: B33)</label>
-              <input type="text" id="swal-sampah-norumah" value="${presetRumah}" placeholder="Masukkan No Rumah" class="w-full border rounded-lg p-2.5 text-sm mt-1 uppercase">
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-gray-600">Pilih Bulan & Tahun Mulai</label>
-              <input type="month" id="swal-sampah-bulandari" value="${defaultBulan}" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white">
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-gray-600">Sampai Bulan & Tahun</label>
-              <input type="month" id="swal-sampah-bulansampai" value="${defaultBulan}" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white">
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-gray-600">Total Nominal (Rp)</label>
-              <input type="number" id="swal-sampah-nominal" placeholder="Contoh: 20000" value="20000" class="w-full border rounded-lg p-2.5 text-sm mt-1">
-            </div>
-          </div>
-        `,
-        showCancelButton: true,
-        confirmButtonText: 'Proses Lunas',
-        cancelButtonText: 'Batal',
-        confirmButtonColor: '#2563eb',
-        preConfirm: () => {
-          return {
-            no_rumah: document.getElementById('swal-sampah-norumah').value.trim(),
-            bulan_dari: document.getElementById('swal-sampah-bulandari').value.trim(),
-            bulan_sampai: document.getElementById('swal-sampah-bulansampai').value.trim(),
-            nominal: document.getElementById('swal-sampah-nominal').value.trim(),
-            status: "Lunas"
-          };
-        }
+        title: '<strong>Konfirmasi Iuran Sampah</strong>',
+        html: `<div class="text-left space-y-3 pt-2"><div><label class="text-xs font-semibold text-gray-600">Nomor Rumah</label><input type="text" id="swal-sampah-norumah" value="${presetRumah}" class="w-full border rounded-lg p-2.5 text-sm mt-1 uppercase"></div><div><label class="text-xs font-semibold text-gray-600">Mulai Bulan</label><input type="month" id="swal-sampah-bulandari" value="${tgl.getFullYear()}-${String(tgl.getMonth()+1).padStart(2,'0')}" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white"></div><div><label class="text-xs font-semibold text-gray-600">Sampai Bulan</label><input type="month" id="swal-sampah-bulansampai" value="${tgl.getFullYear()}-${String(tgl.getMonth()+1).padStart(2,'0')}" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white"></div><div><label class="text-xs font-semibold text-gray-600">Nominal Total (Rp)</label><input type="number" id="swal-sampah-nominal" value="20000" class="w-full border rounded-lg p-2.5 text-sm mt-1"></div></div>`,
+        showCancelButton: true, confirmButtonText: 'Proses Lunas', cancelButtonText: 'Batal', confirmButtonColor: '#2563eb',
+        preConfirm: () => ({ no_rumah: document.getElementById('swal-sampah-norumah').value.trim(), bulan_dari: document.getElementById('swal-sampah-bulandari').value.trim(), bulan_sampai: document.getElementById('swal-sampah-bulansampai').value.trim(), nominal: document.getElementById('swal-sampah-nominal').value.trim(), status: "Lunas" })
       }).then((result) => {
         if (result.isConfirmed) {
-          const dataInput = result.value;
-          if (!dataInput.no_rumah || !dataInput.bulan_dari || !dataInput.bulan_sampai || !dataInput.nominal) {
-            showToast('warning', 'Semua kolom wajib diisi!');
-            return;
-          }
-
           showLoading("Menyimpan data iuran sampah...");
-
-          fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({
-              action: "inputSampahWarga",
-              ...dataInput
-            })
-          })
+          fetch(API_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "inputSampahWarga", ...result.value }) })
           .then(res => res.json())
           .then(res => {
             Swal.close();
             if (res.status === 'success') {
               showToast('success', 'Iuran sampah berhasil dicatat Lunas!');
-              // Refresh data simulasi BUMDes
-              if(currentUser && currentUser.role === 'bumdes') loadDashboardBumdes();
-            } else {
-              showToast('error', res.message);
-            }
+              if (currentUser && currentUser.role === 'bumdes') loadDashboardBumdes();
+            } else { showToast('error', res.message); }
           })
-          .catch(() => {
-            Swal.close();
-            showToast('error', 'Gagal terhubung ke server');
-          });
+          .catch(() => { Swal.close(); showToast('error', 'Gagal terhubung ke server'); });
         }
       });
     }
 
-    // NAVIGATION & MODAL HELPERS
+    // NAVIGATION
     function pindahTab(tabName) {
       document.getElementById("page-dashboard").classList.add("hidden");
       document.getElementById("page-dashboard").classList.remove("flex");
       document.getElementById("page-pengumuman").classList.add("hidden");
       document.getElementById("page-laporan").classList.add("hidden");
       document.getElementById("page-kas").classList.add("hidden");
-      
       var pagePengaturan = document.getElementById("page-pengaturan");
       if (pagePengaturan) pagePengaturan.classList.add("hidden");
 
@@ -1789,11 +1335,9 @@
       }
     }
 
-    // FUNGSI TOGGLE PASSWORD & PENGATURAN AKUN
     function togglePasswordVisibility() {
       const passwordInput = document.getElementById("set-password");
       const eyeIcon = document.getElementById("eye-icon");
-      
       if (passwordInput.type === "password") {
         passwordInput.type = "text";
         eyeIcon.classList.remove("fa-eye");
@@ -1807,75 +1351,32 @@
 
     function konfirmasiSimpanAkun() {
       if (!currentUser) return;
-
       const hpBaru = document.getElementById("set-nohp").value.trim();
       const passBaru = document.getElementById("set-password").value.trim();
 
-      if (!hpBaru) {
-        showToast('warning', 'Nomor HP tidak boleh kosong!');
-        return;
-      }
-
-      const isHpBerubah = hpBaru !== String(currentUser.no_hp || "");
-      const isPasswordDiisi = passBaru !== ""; 
-
-      if (!isHpBerubah && !isPasswordDiisi) {
-        showToast('warning', 'Tidak ada perubahan data yang dilakukan!');
-        return;
-      }
-
-      let perubahanList = [];
-      if (isHpBerubah) perubahanList.push("No HP");
-      if (isPasswordDiisi) perubahanList.push("Password");
-
-      let teksBagian = perubahanList.join(" dan ");
+      if (!hpBaru) { showToast('warning', 'Nomor HP tidak boleh kosong!'); return; }
 
       Swal.fire({
-        title: 'Konfirmasi Perubahan',
-        text: `Apakah Anda yakin untuk mengubah ${teksBagian}?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Ubah',
-        cancelButtonText: 'Batal',
-        confirmButtonColor: '#059669',
-        cancelButtonColor: '#d33',
-        reverseButtons: true
+        title: 'Konfirmasi Perubahan', text: 'Apakah Anda yakin ingin mengubah data akun?', icon: 'question',
+        showCancelButton: true, confirmButtonText: 'Ya, Ubah', cancelButtonText: 'Batal', confirmButtonColor: '#059669', reverseButtons: true
       }).then((result) => {
         if (result.isConfirmed) {
-          eksekusiSimpanAkun(hpBaru, passBaru);
+          showLoading("Menyimpan perubahan akun...");
+          fetch(API_URL, {
+            method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "updateAkun", id_warga: currentUser.id_warga, no_hp: hpBaru, password: passBaru })
+          })
+          .then(res => res.json())
+          .then(data => {
+            Swal.close();
+            if (data.status === 'success') {
+              currentUser.no_hp = hpBaru;
+              showToast('success', data.message);
+              setTimeout(() => pindahTab('dashboard'), 1500);
+            } else { showToast('error', data.message); }
+          })
+          .catch(() => { Swal.close(); showToast('error', 'Gagal memperbarui akun'); });
         }
-      });
-    }
-
-    function eksekusiSimpanAkun(hpBaru, passBaru) {
-      showLoading("Menyimpan perubahan akun...");
-
-      fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          action: "updateAkun",
-          id_warga: currentUser.id_warga,
-          no_hp: hpBaru,
-          password: passBaru
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        Swal.close();
-        if (data.status === 'success') {
-          currentUser.no_hp = hpBaru;
-          showToast('success', data.message);
-          setTimeout(() => {
-            pindahTab('dashboard');
-          }, 1500);
-        } else {
-          showToast('error', data.message);
-        }
-      })
-      .catch(err => {
-        Swal.close();
-        showToast('error', 'Gagal memperbarui akun');
       });
     }
 
@@ -1892,57 +1393,39 @@
       document.getElementById("wrapper-btn-pengeluaran").classList.add("hidden");
       document.getElementById("wrapper-btn-approval").classList.add("hidden");
       document.getElementById("page-login").classList.remove("hidden");
-      
       showToast('info', 'Anda telah keluar');
     }
 
     function checkAdminRole() {
       if (!currentUser || !currentUser.role) return;
       const role = currentUser.role.toLowerCase();
-
-      // Tombol mengapung (Tambah Warga / Pengumuman) khusus Admin & RT
       if (['admin', 'rt'].includes(role)) {
         document.getElementById("admin-action-btn").classList.remove("hidden");
       } else {
         document.getElementById("admin-action-btn").classList.add("hidden");
       }
 
-      // Tombol Menu Bendahara di Dashboard
       const btnBendahara = document.getElementById("btn-menu-bendahara");
       if (btnBendahara) {
-        if (role === 'bendahara') {
-          btnBendahara.classList.remove("hidden");
-        } else {
-          btnBendahara.classList.add("hidden");
-        }
+        if (role === 'bendahara') btnBendahara.classList.remove("hidden");
+        else btnBendahara.classList.add("hidden");
       }
 
-      // Tombol Input Pemasukan & Pengeluaran HANYA untuk Bendahara (Admin tidak perlu)
       const wrapperBtnKeluar = document.getElementById("wrapper-btn-pengeluaran");
       if (wrapperBtnKeluar) {
-        if (role === 'bendahara') {
-          wrapperBtnKeluar.classList.remove("hidden");
-        } else {
-          wrapperBtnKeluar.classList.add("hidden");
-        }
+        if (role === 'bendahara') wrapperBtnKeluar.classList.remove("hidden");
+        else wrapperBtnKeluar.classList.add("hidden");
       }
 
-      // Tombol Persetujuan (Approval) HANYA untuk Admin & RT
       const wrapperBtnApproval = document.getElementById("wrapper-btn-approval");
       if (wrapperBtnApproval) {
-        if (['admin', 'rt'].includes(role)) {
-          wrapperBtnApproval.classList.remove("hidden");
-        } else {
-          wrapperBtnApproval.classList.add("hidden");
-        }
+        if (['admin', 'rt'].includes(role)) wrapperBtnApproval.classList.remove("hidden");
+        else wrapperBtnApproval.classList.add("hidden");
       }
     }
 
-    function bukaModalPengumuman() {
-      document.getElementById("modal-pengumuman").classList.remove("hidden");
-    }
-
-    function tutupModalPengumuman() {
+    function bukaModalPengumuman() { document.getElementById("modal-pengumuman").classList.remove("hidden"); }
+    function tutupModalPengumuman() { 
       document.getElementById("modal-pengumuman").classList.add("hidden");
       document.getElementById("adm-judul").value = "";
       document.getElementById("adm-isi").value = "";
@@ -1952,69 +1435,38 @@
       Swal.fire({
         title: '<strong>🚨 TOMBOL DARURAT</strong>',
         html: '<p class="text-sm text-gray-600">Tekan tombol di bawah jika Anda membutuhkan bantuan darurat dari warga/pengurus sekarang!</p>',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc2626',
-        cancelButtonColor: '#6b7280',
-        confirmButtonText: '🚨 YA, KIRIM SINYAL DARURAT!',
-        cancelButtonText: 'Batal',
-        reverseButtons: true
+        icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626', cancelButtonColor: '#6b7280',
+        confirmButtonText: '🚨 YA, KIRIM SINYAL DARURAT!', cancelButtonText: 'Batal', reverseButtons: true
       }).then((result) => {
         if (result.isConfirmed) {
           showLoading("Mengirimkan sinyal darurat...");
-
           fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({
-              action: "panicButton",
-              nama: currentUser ? currentUser.nama : "Warga",
-              no_rumah: currentUser ? currentUser.no_rumah : "-"
-            })
+            method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "panicButton", nama: currentUser ? currentUser.nama : "Warga", no_rumah: currentUser ? currentUser.no_rumah : "-" })
           })
           .then(res => res.json())
           .then(data => {
             Swal.close();
             if (data.status === 'success') {
-              Swal.fire({
-                title: 'Sinyal Darurat Diproses!',
-                text: 'Sinyal berhasil diproses untuk ' + data.total_target + ' warga terdaftar.',
-                icon: 'success',
-                confirmButtonColor: '#059669'
-              });
-            } else {
-              showToast('error', data.message);
-            }
+              Swal.fire({ title: 'Sinyal Darurat Diproses!', text: 'Sinyal berhasil diproses untuk ' + data.total_target + ' warga terdaftar.', icon: 'success', confirmButtonColor: '#059669' });
+            } else { showToast('error', data.message); }
           })
-          .catch(err => {
-            Swal.close();
-            showToast('error', 'Gagal memicu sinyal darurat: ' + err.message);
-          });
+          .catch(err => { Swal.close(); showToast('error', 'Gagal memicu sinyal darurat: ' + err.message); });
         }
       });
     }
 
-    // FUNGSI MENU POPUP ALA WHATSAPP
     function toggleMenuPopup() {
-      const popup = document.getElementById("popup-menu-admin");
-      const icon = document.getElementById("icon-plus-menu");
-      popup.classList.toggle("hidden");
-      icon.classList.toggle("rotate-45");
+      document.getElementById("popup-menu-admin").classList.toggle("hidden");
+      document.getElementById("icon-plus-menu").classList.toggle("rotate-45");
     }
-
     function tutupMenuPopup() {
-      const popup = document.getElementById("popup-menu-admin");
-      const icon = document.getElementById("icon-plus-menu");
-      popup.classList.add("hidden");
-      icon.classList.remove("rotate-45");
+      document.getElementById("popup-menu-admin").classList.add("hidden");
+      document.getElementById("icon-plus-menu").classList.remove("rotate-45");
     }
 
-    // MODAL TAMBAH WARGA
-    function bukaModalTambahWarga() {
-      document.getElementById("modal-tambah-warga").classList.remove("hidden");
-    }
-
-    function tutupModalTambahWarga() {
+    function bukaModalTambahWarga() { document.getElementById("modal-tambah-warga").classList.remove("hidden"); }
+    function tutupModalTambahWarga() { 
       document.getElementById("modal-tambah-warga").classList.add("hidden");
       document.getElementById("warga-nama").value = "";
       document.getElementById("warga-nohp").value = "";
@@ -2029,96 +1481,20 @@
       const noRumah = document.getElementById("warga-norumah").value.trim();
       const role = document.getElementById("warga-role").value;
 
-      if (!nama || !nohp || !password || !noRumah) {
-        showToast('warning', 'Semua kolom wajib diisi!');
-        return;
-      }
+      if (!nama || !nohp || !password || !noRumah) { showToast('warning', 'Semua kolom wajib diisi!'); return; }
 
       showLoading("Menyimpan data warga...");
-
       fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          action: "tambahWarga",
-          nama: nama,
-          no_hp: nohp,
-          password: password,
-          no_rumah: noRumah,
-          role: role
-        })
+        method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "tambahWarga", nama: nama, no_hp: nohp, password: password, no_rumah: noRumah, role: role })
       })
       .then(res => res.json())
       .then(data => {
         Swal.close();
-        if (data.status === 'success') {
-          showToast('success', data.message);
-          tutupModalTambahWarga();
-        } else {
-          showToast('error', data.message);
-        }
+        if (data.status === 'success') { showToast('success', data.message); tutupModalTambahWarga(); }
+        else { showToast('error', data.message); }
       })
-      .catch(err => {
-        Swal.close();
-        showToast('error', 'Gagal terhubung ke server');
-      });
-    }
-    // FITUR PENCARIAN WAKTU NYATA
-    function cariWargaBumdes() {
-      const input = document.getElementById("search-bumdes").value.toLowerCase();
-      const items = document.getElementsByClassName("warga-item");
-
-      for (let i = 0; i < items.length; i++) {
-        const textData = items[i].innerText.toLowerCase();
-        if (textData.includes(input)) {
-          items[i].style.display = "flex";
-        } else {
-          items[i].style.display = "none";
-        }
-      }
-    }
-
-    // UPDATE RENDER & TARIF JS
-    function loadDashboardBumdes() {
-      document.getElementById('list-warga-bumdes').innerHTML = '<p class="text-gray-400 italic text-center py-4">Memuat data tagihan...</p>';
-      
-      fetch(API_URL + "?action=getRekapSampahBumdes")
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === 'success') {
-            document.getElementById('bumdes-penerimaan').innerText = formatRupiah(res.penerimaan || 0);
-            document.getElementById('bumdes-belumbayar').innerText = (res.total_tunggakan_warga || 0) + " Warga";
-            
-            const container = document.getElementById('list-warga-bumdes');
-            container.innerHTML = '';
-            
-            if (res.data_warga && res.data_warga.length > 0) {
-              res.data_warga.forEach(w => {
-                let cleanHp = String(w.no_hp || '').replace(/[^0-9]/g, '');
-                if (cleanHp.startsWith('0')) cleanHp = '62' + cleanHp.substring(1);
-
-                // Tambahan class "warga-item" agar bisa dicari
-                container.innerHTML += `
-                  <div class="warga-item flex justify-between items-center p-2.5 border-b last:border-b-0 hover:bg-gray-50">
-                    <div>
-                      <p class="font-bold text-gray-800">${w.nama} <span class="text-gray-400 font-normal">(Blok ${w.no_rumah})</span></p>
-                      <p class="text-[10px] text-red-600 font-semibold mt-0.5">Nunggak ${w.jumlah_bulan} Bulan &bull; ${formatRupiah(w.total_tagihan)}</p>
-                    </div>
-                    <div class="flex gap-1.5">
-                      <a href="https://wa.me/${cleanHp}?text=Halo%20${encodeURIComponent(w.nama)},%20mohon%20segera%20lunasi%20tunggakan%20iuran%20sampah." target="_blank" class="bg-emerald-100 text-emerald-700 px-2 py-1.5 rounded font-bold flex items-center justify-center"><i class="fa-brands fa-whatsapp"></i></a>
-                      <button onclick="bukaModalInputSampah('${w.no_rumah}')" class="bg-blue-600 text-white px-3 py-1.5 rounded font-bold">Bayar</button>
-                    </div>
-                  </div>
-                `;
-              });
-            } else {
-              container.innerHTML = '<p class="text-emerald-600 font-bold text-center py-4">Semua tagihan lunas! 🎉</p>';
-            }
-          }
-        })
-        .catch(err => {
-          document.getElementById('list-warga-bumdes').innerHTML = '<p class="text-red-500 italic text-center py-4">Gagal memuat data dari server.</p>';
-        });
+      .catch(() => { Swal.close(); showToast('error', 'Gagal terhubung ke server'); });
     }
   </script>
 </body>
