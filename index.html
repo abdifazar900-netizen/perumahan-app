@@ -1441,7 +1441,7 @@
             
             var tunggakan = dataSampahUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
             var totalTunggakan = 0;
-            tunggakan.forEach(k => totalTunggakan += Number(k.nominal || 15000));
+            tunggakan.forEach(k => totalTunggakan += Number(k.nominal || 20000));
 
             var cardSampahContainer = document.getElementById("status-sampah-container");
             if (!cardSampahContainer) return;
@@ -1533,11 +1533,11 @@
             '<p class="font-bold text-gray-800">Iuran Sampah Bulan ' + labelBulanTahun + '</p>' +
             '<p class="text-xs text-red-600 font-semibold">Belum Dibayar</p>' +
           '</div>' +
-          '<span class="font-bold text-gray-700">' + formatRupiah(k.nominal || 15000) + '</span>' +
+          '<span class="font-bold text-gray-700">' + formatRupiah(k.nominal || 20000) + '</span>' +
         '</div>';
       }).join('');
 
-      var total = tunggakan.reduce((sum, item) => sum + Number(item.nominal || 15000), 0);
+      var total = tunggakan.reduce((sum, item) => sum + Number(item.nominal || 20000), 0);
 
       Swal.fire({
         title: '<strong>Rincian Tagihan Sampah BUMDes</strong>',
@@ -1680,7 +1680,7 @@
             </div>
             <div>
               <label class="text-xs font-semibold text-gray-600">Total Nominal (Rp)</label>
-              <input type="number" id="swal-sampah-nominal" placeholder="Contoh: 30000" value="15000" class="w-full border rounded-lg p-2.5 text-sm mt-1">
+              <input type="number" id="swal-sampah-nominal" placeholder="Contoh: 20000" value="20000" class="w-full border rounded-lg p-2.5 text-sm mt-1">
             </div>
           </div>
         `,
@@ -1873,10 +1873,10 @@
       document.getElementById("bottom-nav").classList.add("hidden");
       document.getElementById("admin-action-btn").classList.add("hidden");
       document.getElementById("btn-menu-bendahara").classList.add("hidden");
-      document.getElementById("btn-menu-bumdes").classList.add("hidden");
       document.getElementById("wrapper-btn-pengeluaran").classList.add("hidden");
       document.getElementById("wrapper-btn-approval").classList.add("hidden");
       document.getElementById("page-login").classList.remove("hidden");
+      
       showToast('info', 'Anda telah keluar');
     }
 
