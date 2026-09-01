@@ -28,7 +28,7 @@
       display: inline-block;
       white-space: nowrap;
       animation: marquee 30s linear infinite;
-      will-change: transform; /* Tambahan ini agar browser merender animasi secara instan */
+      will-change: transform;
     }
     body { 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
@@ -108,6 +108,13 @@
           </div>
         </div>
 
+        <!-- KARTU STATUS IURAN SAMPAH -->
+        <div id="status-sampah-container" class="bg-white text-gray-800 p-4 rounded-xl shadow-md flex justify-between items-center mb-3">
+          <div>
+            <p class="text-xs text-gray-500 font-semibold">Memuat Data Sampah...</p>
+          </div>
+        </div>
+
         <!-- BANNER INFORMASI KAS BERJALAN -->
         <div class="bg-amber-50 border border-amber-200 text-amber-800 rounded-xl px-3 py-2 overflow-hidden shadow-sm flex items-center">
           <div class="bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md mr-2 flex items-center gap-1 shrink-0 z-10 shadow-sm">
@@ -133,6 +140,12 @@
         <button id="btn-menu-bendahara" onclick="bukaModalInputKas()" class="hidden bg-emerald-50 p-3 rounded-xl border border-emerald-100 text-emerald-600 flex flex-col items-center col-span-3">
           <i class="fa-solid fa-wallet text-xl mb-1"></i>
           <span class="text-xs font-semibold">Input / Update Kas Warga (Bendahara)</span>
+        </button>
+
+        <!-- TOMBOL KHUSUS BUMDES -->
+        <button id="btn-menu-bumdes" onclick="bukaModalInputSampah()" class="hidden bg-blue-50 p-3 rounded-xl border border-blue-100 text-blue-600 flex flex-col items-center col-span-3">
+          <i class="fa-solid fa-trash-can text-xl mb-1"></i>
+          <span class="text-xs font-semibold">Input / Update Iuran Sampah (BUMDes)</span>
         </button>
 
         <button onclick="pindahTab('laporan')" class="bg-red-50 p-3 rounded-xl border border-red-100 text-red-600 flex flex-col items-center">
@@ -339,6 +352,7 @@
           <option value="warga">Warga</option>
           <option value="rt">RT / Pengurus</option>
           <option value="bendahara">Bendahara</option>
+          <option value="bumdes">BUMDes (Pengelola Sampah)</option>
           <option value="admin">Admin</option>
         </select>
       </div>
@@ -491,6 +505,7 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbxYwsbixp0Wvuily2-I48hQhXMdL42T4JkkSlB-qX5ySpsnHzGnxqDhOXwnsQdEVIgGnA/exec";
     let currentUser = null;
     let dataKasUser = [];
+    let dataSampahUser = [];
     let cacheDataKas = []; 
 
     // FUNGSI UTILITY SWEETALERT2
@@ -583,6 +598,7 @@
           
           setTimeout(() => {
             loadDataKasWarga();
+            loadDataSampahWarga();
             muatDataKasKeuangan();
           }, 100);
 
@@ -1286,13 +1302,13 @@
             } else {
               cardKasContainer.innerHTML = 
                 '<div>' +
-                  '<p class="text-xs text-gray-500 font-semibold">Status Iuran Bulan Ini</p>' +
+                  '<p class="text-xs text-gray-500 font-semibold">Status Iuran Kas</p>' +
                   '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">' +
                     '<i class="fa-solid fa-circle-check mr-1"></i> Lunas' +
                   '</span>' +
                 '</div>' +
                 '<button onclick="showToast(\'info\', \'Iuran Kas Anda Sudah Lunas\')" class="bg-emerald-600 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
-                  'Bayar Kas' +
+                  'Cek Kas' +
                 '</button>';
             }
           } else {
@@ -1304,6 +1320,59 @@
           var cardKasContainer = document.getElementById("status-kas-container");
           if (cardKasContainer) {
             cardKasContainer.innerHTML = '<p class="text-xs text-red-500 font-semibold">Gagal memuat data kas</p>';
+          }
+        });
+    }
+
+    // SAMPAH WARGA (BUMDES)
+    function loadDataSampahWarga() {
+      if (!currentUser || !currentUser.no_rumah) return;
+
+      var urlEndpoint = (typeof API_URL !== 'undefined' ? API_URL : SCRIPT_URL);
+
+      fetch(urlEndpoint + "?action=getSampahWarga&no_rumah=" + encodeURIComponent(currentUser.no_rumah))
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success') {
+            dataSampahUser = res.data || [];
+            
+            var tunggakan = dataSampahUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
+            var totalTunggakan = 0;
+            tunggakan.forEach(k => totalTunggakan += Number(k.nominal || 15000));
+
+            var cardSampahContainer = document.getElementById("status-sampah-container");
+            if (!cardSampahContainer) return;
+
+            if (tunggakan.length > 0) {
+              cardSampahContainer.innerHTML = 
+                '<div>' +
+                  '<p class="text-xs text-gray-500 font-semibold">Tunggakan Sampah BUMDes (' + tunggakan.length + ' Bulan)</p>' +
+                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-red-100 text-red-700 rounded-full font-bold">' +
+                    '<i class="fa-solid fa-triangle-exclamation mr-1"></i> ' + formatRupiah(totalTunggakan) +
+                  '</span>' +
+                '</div>' +
+                '<button onclick="bukaModalRincianSampah()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
+                  'Info Sampah' +
+                '</button>';
+            } else {
+              cardSampahContainer.innerHTML = 
+                '<div>' +
+                  '<p class="text-xs text-gray-500 font-semibold">Iuran Sampah BUMDes</p>' +
+                  '<span class="inline-block mt-1 text-xs px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">' +
+                    '<i class="fa-solid fa-circle-check mr-1"></i> Lunas' +
+                  '</span>' +
+                '</div>' +
+                '<button onclick="bukaModalStrukSampahLunas()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded-lg font-bold">' +
+                  'Cek Struk' +
+                '</button>';
+            }
+          }
+        })
+        .catch(err => {
+          console.error("Error load sampah:", err);
+          var cardSampahContainer = document.getElementById("status-sampah-container");
+          if (cardSampahContainer) {
+            cardSampahContainer.innerHTML = '<p class="text-xs text-red-500 font-semibold">Gagal memuat data sampah</p>';
           }
         });
     }
@@ -1348,6 +1417,65 @@
           var pesanWA = "Halo " + KONTAK_PENGURUS.bendahara.nama + ", saya dari Blok " + currentUser.no_rumah + " ingin mengonfirmasi pembayaran kas tunggakan sebesar " + formatRupiah(total);
           window.open("https://wa.me/" + KONTAK_PENGURUS.bendahara.wa + "?text=" + encodeURIComponent(pesanWA), "_blank");
         }
+      });
+    }
+
+    function bukaModalRincianSampah() {
+      var tunggakan = dataSampahUser.filter(k => String(k.status).toLowerCase() === 'belum bayar');
+      
+      var htmlItems = tunggakan.map(function(k) {
+        var labelBulanTahun = formatBulanTahun(k.bulan_tahun);
+        return '<div class="flex items-center justify-between p-2.5 bg-gray-50 rounded-lg border mb-2 text-sm">' +
+          '<div class="text-left">' +
+            '<p class="font-bold text-gray-800">Iuran Sampah Bulan ' + labelBulanTahun + '</p>' +
+            '<p class="text-xs text-red-600 font-semibold">Belum Dibayar</p>' +
+          '</div>' +
+          '<span class="font-bold text-gray-700">' + formatRupiah(k.nominal || 15000) + '</span>' +
+        '</div>';
+      }).join('');
+
+      var total = tunggakan.reduce((sum, item) => sum + Number(item.nominal || 15000), 0);
+
+      Swal.fire({
+        title: '<strong>Rincian Tagihan Sampah BUMDes</strong>',
+        icon: 'info',
+        html: '<div class="pt-2 text-left">' +
+            (htmlItems || '<p class="text-xs text-gray-500 italic">Tidak ada tunggakan aktif.</p>') +
+            '<div class="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200 flex justify-between items-center font-bold text-sm text-blue-800">' +
+              '<span>Total Tagihan:</span>' +
+              '<span>' + formatRupiah(total) + '</span>' +
+            '</div>' +
+          '</div>',
+        confirmButtonText: 'Tutup',
+        confirmButtonColor: '#2563eb'
+      });
+    }
+
+    function bukaModalStrukSampahLunas() {
+      Swal.fire({
+        title: '<strong>🧾 Bukti Lunas Iuran Sampah</strong>',
+        html: `
+          <div class="text-left bg-gray-50 p-4 rounded-xl border space-y-2 text-xs">
+            <div class="flex justify-between border-b pb-1">
+              <span class="text-gray-500">Pengelola:</span>
+              <span class="font-bold text-blue-600">BUMDes D'Mutiara Sodong</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-500">No Rumah:</span>
+              <span class="font-bold">Blok ${currentUser.no_rumah}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-500">Nama Warga:</span>
+              <span class="font-bold">${currentUser.nama}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-500">Status:</span>
+              <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold rounded-full">LUNAS</span>
+            </div>
+          </div>
+        `,
+        confirmButtonText: 'Tutup',
+        confirmButtonColor: '#2563eb'
       });
     }
 
@@ -1417,6 +1545,83 @@
             }
           })
           .catch(err => {
+            Swal.close();
+            showToast('error', 'Gagal terhubung ke server');
+          });
+        }
+      });
+    }
+
+    // FORM INPUT SAMPAH OLEH BUMDES (MULTI-BULAN)
+    function bukaModalInputSampah() {
+      const tglSekarang = new Date();
+      const tahunIni = tglSekarang.getFullYear();
+      const bulanIni = String(tglSekarang.getMonth() + 1).padStart(2, '0');
+      const defaultBulan = `${tahunIni}-${bulanIni}`;
+
+      Swal.fire({
+        title: '<strong>Konfirmasi Iuran Sampah (BUMDes)</strong>',
+        html: `
+          <div class="text-left space-y-3 pt-2">
+            <div>
+              <label class="text-xs font-semibold text-gray-600">Nomor / Blok Rumah (Contoh: B33)</label>
+              <input type="text" id="swal-sampah-norumah" placeholder="Masukkan No Rumah" class="w-full border rounded-lg p-2.5 text-sm mt-1 uppercase">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600">Pilih Bulan & Tahun Mulai</label>
+              <input type="month" id="swal-sampah-bulandari" value="${defaultBulan}" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600">Sampai Bulan & Tahun</label>
+              <input type="month" id="swal-sampah-bulansampai" value="${defaultBulan}" class="w-full border rounded-lg p-2.5 text-sm mt-1 bg-white">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-600">Total Nominal (Rp)</label>
+              <input type="number" id="swal-sampah-nominal" placeholder="Contoh: 30000" value="15000" class="w-full border rounded-lg p-2.5 text-sm mt-1">
+            </div>
+          </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Proses Lunas & Cetak Struk',
+        cancelButtonText: 'Batal',
+        confirmButtonColor: '#2563eb',
+        preConfirm: () => {
+          return {
+            no_rumah: document.getElementById('swal-sampah-norumah').value.trim(),
+            bulan_dari: document.getElementById('swal-sampah-bulandari').value.trim(),
+            bulan_sampai: document.getElementById('swal-sampah-bulansampai').value.trim(),
+            nominal: document.getElementById('swal-sampah-nominal').value.trim(),
+            status: "Lunas"
+          };
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const dataInput = result.value;
+          if (!dataInput.no_rumah || !dataInput.bulan_dari || !dataInput.bulan_sampai || !dataInput.nominal) {
+            showToast('warning', 'Semua kolom wajib diisi!');
+            return;
+          }
+
+          showLoading("Menyimpan data iuran sampah...");
+
+          fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              action: "inputSampahWarga",
+              ...dataInput
+            })
+          })
+          .then(res => res.json())
+          .then(res => {
+            Swal.close();
+            if (res.status === 'success') {
+              showToast('success', 'Iuran sampah berhasil dicatat Lunas!');
+            } else {
+              showToast('error', res.message);
+            }
+          })
+          .catch(() => {
             Swal.close();
             showToast('error', 'Gagal terhubung ke server');
           });
@@ -1561,6 +1766,7 @@
       document.getElementById("bottom-nav").classList.add("hidden");
       document.getElementById("admin-action-btn").classList.add("hidden");
       document.getElementById("btn-menu-bendahara").classList.add("hidden");
+      document.getElementById("btn-menu-bumdes").classList.add("hidden");
       document.getElementById("wrapper-btn-pengeluaran").classList.add("hidden");
       document.getElementById("wrapper-btn-approval").classList.add("hidden");
       document.getElementById("page-login").classList.remove("hidden");
@@ -1585,6 +1791,16 @@
           btnBendahara.classList.remove("hidden");
         } else {
           btnBendahara.classList.add("hidden");
+        }
+      }
+
+      // Tombol Menu BUMDes di Dashboard
+      const btnBumdes = document.getElementById("btn-menu-bumdes");
+      if (btnBumdes) {
+        if (role === 'bumdes') {
+          btnBumdes.classList.remove("hidden");
+        } else {
+          btnBumdes.classList.add("hidden");
         }
       }
 
