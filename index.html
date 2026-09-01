@@ -666,40 +666,46 @@
       });
     }
 
-    // FUNGSI DASHBOARD KHUSUS BUMDES
+    // FUNGSI DASHBOARD KHUSUS BUMDES (ASLI / LIVE DATA)
     function loadDashboardBumdes() {
       document.getElementById('list-warga-bumdes').innerHTML = '<p class="text-gray-400 italic text-center py-4">Memuat data tagihan...</p>';
       
-      // Karena belum ada endpoint getKeuanganSampahBumdes di Apps Script, 
-      // untuk sementara kita panggil getKasWarga tanpa no_rumah (untuk memancing respon semua warga)
-      // Idealnya ini butuh endpoint khusus di Code.js. Untuk sekarang kita buat simulasi UI-nya dulu.
-      setTimeout(() => {
-        const dummyData = [
-          { nama: "Bpk Budi", no_rumah: "B1", no_hp: "081234567890", jumlah_bulan: 3, total_tagihan: 45000 },
-          { nama: "Ibu Siti", no_rumah: "B5", no_hp: "089876543210", jumlah_bulan: 1, total_tagihan: 15000 }
-        ];
+      fetch(API_URL + "?action=getRekapSampahBumdes")
+        .then(res => res.json())
+        .then(res => {
+          if (res.status === 'success') {
+            document.getElementById('bumdes-penerimaan').innerText = formatRupiah(res.penerimaan || 0);
+            document.getElementById('bumdes-belumbayar').innerText = (res.total_tunggakan_warga || 0) + " Warga";
+            
+            const container = document.getElementById('list-warga-bumdes');
+            container.innerHTML = '';
+            
+            if (res.data_warga && res.data_warga.length > 0) {
+              res.data_warga.forEach(w => {
+                let cleanHp = String(w.no_hp || '').replace(/[^0-9]/g, '');
+                if (cleanHp.startsWith('0')) cleanHp = '62' + cleanHp.substring(1);
 
-        document.getElementById('bumdes-penerimaan').innerText = formatRupiah(150000);
-        document.getElementById('bumdes-belumbayar').innerText = dummyData.length + " Warga";
-        
-        const container = document.getElementById('list-warga-bumdes');
-        container.innerHTML = '';
-        
-        dummyData.forEach(w => {
-          container.innerHTML += `
-            <div class="flex justify-between items-center p-2.5 border-b last:border-b-0 hover:bg-gray-50">
-              <div>
-                <p class="font-bold text-gray-800">${w.nama} <span class="text-gray-400 font-normal">(Blok ${w.no_rumah})</span></p>
-                <p class="text-[10px] text-red-600 font-semibold mt-0.5">Nunggak ${w.jumlah_bulan} Bulan &bull; ${formatRupiah(w.total_tagihan)}</p>
-              </div>
-              <div class="flex gap-1.5">
-                <a href="https://wa.me/62${w.no_hp.substring(1)}?text=Halo%20${w.nama},%20mohon%20segera%20lunasi%20tunggakan%20iuran%20sampah." target="_blank" class="bg-emerald-100 text-emerald-700 px-2 py-1.5 rounded font-bold flex items-center justify-center"><i class="fa-brands fa-whatsapp"></i></a>
-                <button onclick="bukaModalInputSampah('${w.no_rumah}')" class="bg-blue-600 text-white px-3 py-1.5 rounded font-bold">Bayar</button>
-              </div>
-            </div>
-          `;
+                container.innerHTML += `
+                  <div class="flex justify-between items-center p-2.5 border-b last:border-b-0 hover:bg-gray-50">
+                    <div>
+                      <p class="font-bold text-gray-800">${w.nama} <span class="text-gray-400 font-normal">(Blok ${w.no_rumah})</span></p>
+                      <p class="text-[10px] text-red-600 font-semibold mt-0.5">Nunggak ${w.jumlah_bulan} Bulan &bull; ${formatRupiah(w.total_tagihan)}</p>
+                    </div>
+                    <div class="flex gap-1.5">
+                      <a href="https://wa.me/${cleanHp}?text=Halo%20${encodeURIComponent(w.nama)},%20mohon%20segera%20lunasi%20tunggakan%20iuran%20sampah." target="_blank" class="bg-emerald-100 text-emerald-700 px-2 py-1.5 rounded font-bold flex items-center justify-center"><i class="fa-brands fa-whatsapp"></i></a>
+                      <button onclick="bukaModalInputSampah('${w.no_rumah}')" class="bg-blue-600 text-white px-3 py-1.5 rounded font-bold">Bayar</button>
+                    </div>
+                  </div>
+                `;
+              });
+            } else {
+              container.innerHTML = '<p class="text-emerald-600 font-bold text-center py-4">Semua tagihan lunas! 🎉</p>';
+            }
+          }
+        })
+        .catch(err => {
+          document.getElementById('list-warga-bumdes').innerHTML = '<p class="text-red-500 italic text-center py-4">Gagal memuat data dari server.</p>';
         });
-      }, 1000);
     }
 
     // FUNGSI MENU KAS & KEUANGAN
